@@ -1,2 +1,11 @@
 # 5-23bot
-python
+discord
+
+## developers
+-SCRATCHER 5-23♪#9999
+
+## language
+-python
+
+## module
+-a
