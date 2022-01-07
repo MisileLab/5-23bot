@@ -1599,4 +1599,4 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
 
-client.run('ODcxMzQ4NDExMzU2NTQ1MDU3.YQaAcg.4QF-_FDHKk2wmjUMCLlG3XmfHUc')
+client.run(token)
