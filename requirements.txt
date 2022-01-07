@@ -1,6 +1,4 @@
 asyncio
-asyncio
-math
 datetime
 time
 youtube-dl
