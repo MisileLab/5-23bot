@@ -1,3 +1,4 @@
+import os
 from asyncio import events
 from os import name
 import nextcord
@@ -1598,5 +1599,5 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
-
+token = os.environ['BOT_TOKEN']
 client.run(token)
