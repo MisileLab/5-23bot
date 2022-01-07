@@ -30,6 +30,8 @@ import humanfriendly
 yt_api_key = "AIzaSyCiFbm7yQ9kjT1UxlKEMYLg_NbzCLLtr-s"
 yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
 
+#==================================================================
+
 ran = 0
 back = 0
 
@@ -1227,6 +1229,73 @@ tan 각도
 """)
         embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
         await message.channel.send(embed = embed)
+
+#--------------------------------------음악--------------------------------------#
+
+    if message.content.startswith("5상태"):
+        await message.channel.send("""🟢│음악명령어 사용가능""")
+
+    if message.content.startswith("5들어와"):
+        await message.author.voice.channel.connect()
+        await message.delete()
+
+    if message.content.startswith("5나가"):
+        for vc in client.voice_clients:
+            if vc.guild == message.guild:
+                voice = vc
+        await voice.disconnect()
+        await message.delete()
+
+    if message.content.startswith("5재생"):
+        noo = 0
+        embed = Embed(title = f"{message.author.name}님이요청하신 곡을 준비중 입니다", color = 0x00ff00)
+        emb = await message.channel.send(embed = embed)
+        for vc in client.voice_clients:
+            if vc.guild == message.guild:
+                voice = vc
+        channel = message.author.voice.channel
+        txt = message.content[4:]
+        print(txt)
+        res = requests.get(f"https://youtube.googleapis.com/youtube/v3/search?q={txt}&part=snippet&type=veodio&key={yt_api_key_m}&alt=json",headers={'User-Agent': 'Mozilla/5.0'}).json()
+        for item in sorted(res['items'] , key=lambda x:x['snippet']['publishedAt']):
+            title = item['snippet']['title']
+            img = item['snippet']['thumbnails']['high']['url']
+            try:
+                url = f"https://www.youtube.com/watch?v={item['id']['videoId']}"
+            except:
+                await emb.edit(embed = Embed(title = "오류!",description = "곡을 찾을수 없어요",color = 0xff0000))
+                noo = 1
+                break
+            break
+        if noo == 0:
+            ydl_opts = {'format': 'bestaudio'}
+            FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+            with YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                URL = info['formats'][0]['url']
+                name = info['title']
+            voice = client.voice_clients[0]
+            embed = Embed(title = f"{message.author.name}님이 {name}을 재생합니다" , color = 0x00ff00 , description = f"[유튜브영상링크]({url})")
+            embed.set_thumbnail(url = img)
+            a = await emb.edit(embed = embed)
+            await a.add_reaction("<:vv:905014667632594994>")
+            if not vc.is_playing():
+                voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+
+    
+    if message.content.startswith("5정지"):
+        for vc in client.voice_clients:
+          if vc.guild == message.guild:
+              voice = vc
+        voice.stop()
+        await message.delete()
+    try:
+        f.close()
+    except:
+        pass
+
+#--------------------------------------음악--------------------------------------#
+
     if message.content.startswith(f"{p}링크 비활성화"):
         if message.author.guild_permissions.manage_messages:
             f = open("svr.txt","r")
@@ -1598,6 +1667,7 @@ async def 유튜버정보변경요청(inter : Interaction , 변경할_유튜버�
 async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
-#--------------------------------------
+
+   #--------------------------------------
 token = os.environ['BOT_TOKEN']
 client.run(token)
