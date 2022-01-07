@@ -2,10 +2,21 @@
 discord
 
 ## developers
--SCRATCHER 5-23♪#9999
+- SCRATCHER 5-23♪#9999
 
 ## language
--python
+- python
 
 ## module
--a
+- asyncio
+- datetime
+- youtube-dl
+- nextcord
+- datetime
+- beautifulsoup4
+- requests
+- ffmpeg-python
+- PingPongTool
+- humanfriendly
+- PyNaCl
+- nextcord[voice]
