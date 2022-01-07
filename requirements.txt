@@ -1,0 +1,17 @@
+asyncio
+os
+asyncio
+random
+math
+datetime
+time
+youtube-dl
+nextcord
+datetime
+beautifulsoup4
+requests
+ffmpeg-python
+PingPongTool
+humanfriendly
+pip
+nextcord.py[voice]
