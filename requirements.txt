@@ -1,5 +1,4 @@
 asyncio
-os
 asyncio
 random
 math
@@ -13,5 +12,4 @@ requests
 ffmpeg-python
 PingPongTool
 humanfriendly
-pip
 nextcord.py[voice]
