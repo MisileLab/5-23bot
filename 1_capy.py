@@ -1,0 +1,1602 @@
+from asyncio import events
+from os import name
+import nextcord
+from nextcord import activity
+from nextcord import embeds
+import asyncio
+ 
+from nextcord.embeds import Embed
+from nextcord.ext.commands.core import check
+from nextcord.shard import EventType
+from nextcord.utils import get
+from random import *
+from math import *
+from datetime import *
+from nextcord import channel
+from time import *
+from nextcord.ext import commands,tasks
+from nextcord.http import Route
+import youtube_dl
+from youtube_dl import *
+
+from nextcord import *
+import datetime
+from bs4 import BeautifulSoup
+import requests
+from PingPongTool import PingPong
+import humanfriendly
+
+yt_api_key = "AIzaSyCiFbm7yQ9kjT1UxlKEMYLg_NbzCLLtr-s"
+yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
+
+ran = 0
+back = 0
+
+scratcher = 577266050769485844
+noob = 711769839022243910
+junjacger = 829200004136173618
+liting = 796295126607593492
+cookie = 892701268798218321
+siba = 782841803530567680
+madle = 849777888231555123
+five = 871348411356545057
+
+INTENTS = Intents.all()
+p = "5"
+client = commands.Bot(command_prefix = p,intents=INTENTS)
+
+def random_color():
+    return randint(0x000000,0xffffff)
+
+@tasks.loop()
+async def change_bot():
+    await client.change_presence(activity=Streaming(name=" | 서버수:{} | 핑:{}ms | ".format(len(client.guilds),int(client.latency * 1000)), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
+    await asyncio.sleep(5)
+    await client.change_presence(activity=Streaming(name=f" | {p}명령어 | ", url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
+    await asyncio.sleep(5)
+
+    
+
+@client.event
+async def on_ready():
+    print('Logged in as')
+    print(client.user.name)
+    print(client.user.id)
+    print('verson:2.0')
+    print('------')
+    change_bot.start()
+
+@client.slash_command()
+async def 핑(inter : Interaction):
+    ping = int(round(client.latency * 1000))
+    embed = Embed(title = "퐁!", description = ("핑 : {}ms").format(ping),color = random_color())
+    if ping <= 200 and ping > 100:
+        embed.add_field(name = "보통 :yellow_square:", value = "by - {}".format(inter.user.name))
+    elif ping <= 100:
+        embed.add_field(name = "정상 :green_square:" ,value = "by - {}".format(inter.user.name))
+    elif ping > 200:
+        embed.add_field(name = "비정상 :red_square:" ,value = "by - {}".format(inter.user.name))
+    await inter.response.send_message(embed = embed)
+
+@client.slash_command(description = "채널을 만듬")
+async def 채널만들기(inter : Interaction , 채널이름):
+    if inter.user.guild_permissions.manage_channels:
+        채널이름 = str(채널이름)
+        채널이름 = 채널이름.replace("/","⁄").replace("#","⧣")
+        await inter.guild.create_text_channel(name = 채널이름)
+        await inter.response.send_message(f">>> {채널이름}채널을 만들었어요!")
+    else:
+        await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 채널관리") , ephemeral=True)
+        return
+
+@client.slash_command(description = "로블록스 유저의 정보를 가저옵니다")
+async def 로블록스(inter : Interaction , 로블록스이름):
+    name = 로블록스이름
+
+    id = requests.get(f"https://api.roblox.com/users/get-by-username?username={name}").json()["Id"]
+
+    user_favorite_game = requests.get(f"https://games.roblox.com/v2/users/{id}/favorite/games?accessFilter=All&sortOrder=Asc&limit=50").json()
+    user_game = requests.get(f"https://games.roblox.com/v2/users/{id}/games?sortOrder=Asc&limit=50").json()
+    user = requests.get(f"https://users.roblox.com/v1/users/{id}").json()
+
+    description = user["description"]
+    create = f'{str(user["created"])[:4]}년{str(user["created"])[5:7]}월{str(user["created"])[8:10]}일'
+    name = user["name"]
+    display_name = user["displayName"]
+    embed = Embed(title = f"{name}의 정보" , color = random_color())
+    embed.add_field(name = "설명" , value=description+"᲻" , inline = False)
+    embed.add_field(name = "표시닉" , value=display_name+"᲻" , inline = False)
+    embed.add_field(name = "생성일" , value=create , inline = False)
+    msg_name = ""
+    try:
+        for i in range(100):
+            try:
+                # game_description = user_game["data"][i]["description"]
+                game_id = user_game["data"][i]["rootPlace"]["id"]
+                game_name = str(user_game["data"][i]["name"]).replace(" ","-")
+                game_link = f"https://www.roblox.com/games/{game_id}/{game_name}"
+                msg_name += f"[{game_name.replace('-',' ')}]({game_link})\n"
+            except:
+                break
+        embed.add_field(name = "자신의 게임" , value = msg_name+"᲻" , inline = False)
+
+        msg_name = ""
+        for i in range(100):
+            try:
+                # game_description = user_favorite_game["data"][i]["description"]
+                game_id = user_favorite_game["data"][i]["rootPlace"]["id"]
+                game_name = str(user_favorite_game["data"][i]["name"]).replace(" ","-")
+                game_link = f"https://www.roblox.com/games/{game_id}/{game_name}"
+                msg_name += f"[{game_name.replace('-',' ')}]({game_link})\n"
+            except:
+                break
+        embed.add_field(name = "즐겨찾기를한 게임" , value = msg_name+"᲻" , inline = False)
+        await inter.response.send_message(embed = embed)
+    except:
+        embed = Embed(title = f"{name}의 정보" , color = random_color())
+        embed.add_field(name = "설명" , value=description+"᲻" , inline = False)
+        embed.add_field(name = "표시닉" , value=display_name+"᲻" , inline = False)
+        embed.add_field(name = "생성일" , value=create , inline = False)
+        user_favorite_game = requests.get(f"https://games.roblox.com/v2/users/{id}/favorite/games?accessFilter=All&sortOrder=Asc&limit=50").json()
+        user_game = requests.get(f"https://games.roblox.com/v2/users/{id}/games?sortOrder=Asc&limit=50").json()
+        msg_name = ""
+        for i in range(25):
+            try:
+                # game_description = user_game["data"][i]["description"]
+                game_id = user_game["data"][i]["rootPlace"]["id"]
+                game_name = str(user_game["data"][i]["name"]).replace(" ","-")
+                game_link = f"https://www.roblox.com/games/{game_id}/{game_name}"
+                msg_name += f"{game_name.replace('-',' ')}\n"
+            except:
+                break
+        embed.add_field(name = "자신의 게임" , value = msg_name+"᲻" , inline = False)
+
+        msg_name = ""
+        for i in range(25):
+            try:
+                # game_description = user_favorite_game["data"][i]["description"]
+                game_id = user_favorite_game["data"][i]["rootPlace"]["id"]
+                game_name = str(user_favorite_game["data"][i]["name"]).replace(" ","-")
+                game_link = f"https://www.roblox.com/games/{game_id}/{game_name}"
+                msg_name += f"{game_name.replace('-',' ')}\n"
+            except:
+                break
+        embed.add_field(name = "즐겨찾기를한 게임" , value = msg_name+"..." , inline = False)
+        await inter.response.send_message(embed = embed)
+
+
+@client.slash_command(description = "맴버를 타임아웃(뮤트) 시킴니다.")
+async def 타임아웃(inter : Interaction , 맴버 : Member , 시간 , 사유):
+    try:
+        if inter.user.guild_permissions.administrator:
+            try:
+                int(시간)
+            except:
+                시간 = str(시간)+"초"
+            기간 = str(시간).replace("초","s").replace("분","m").replace("시간","h").replace("일","d").replace("주일","w").replace("주","w").replace("년","y")
+            time = humanfriendly.parse_timespan(기간)
+            print(time)
+
+            max_time = 2419200.0
+            if time > max_time:
+                time = max_time
+                시간 = "28일"
+            
+            await 맴버.edit(timeout=utils.utcnow() + datetime.timedelta(seconds=time))
+            await inter.response.send_message(embed = Embed(title = "타임아웃!",description = f"{맴버.mention} 님은 {시간}동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
+        else:
+            await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
+    except:
+        await inter.response.send_message(embed = Embed(title="봇에게 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
+
+@client.event
+async def on_message(message):
+    #준비시작------------------------------------------------
+    try:
+        if str(message.channel.type) == "private":
+            if message.author.bot == False:
+                await message.add_reaction("<:gongu:905014564507222016>")
+    except:
+        pass
+    
+    try:
+        role = utils.get(message.guild.roles,name = "음소거")
+        if not role:
+            await message.guild.create_role(name = "음소거")
+            for channel in guild.channels:
+                await channel.set_permissions(role, speak=False, send_messages=False, read_message_history=False, read_messages=True)
+    except:
+        pass
+
+    if message.content.startswith(f"{p}상태"):
+        await message.channel.send("""🟢│기본명령어 사용가능""")
+    
+    if message.content.startswith("//"):
+        msg = str(message.content).replace("//","") 
+        URL = "https://builder.pingpong.us/api/builder/61ab1bade4b0438b885d8379/integration/v0.2/custom/"
+        Authorization = "Basic a2V5OmI1NzUyYjNlY2VlZGE4YzIyMWU1YTU5YjljM2UwZTUz"
+
+        Ping = PingPong(URL, Authorization)
+
+        data = dict(await Ping.Pong("Example", msg))["text"]
+        await message.reply(data)
+
+    #게임준비---------------------------------------------------------------
+    if message.author.bot == False: 
+        try:
+            f = open("lvl.txt","r+")
+            lvl_read = f.read()
+            if str(message.author.id) in str(lvl_read):
+                f.close()
+                f = open("lvl.txt","w")
+                lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
+                tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                
+                if tag == "1":
+                    if randint(1,2) == 2:
+                        lvl_exp += 1
+                        print(1)
+                if tag == "2":
+                    if randint(1,2) == 2:
+                        self_coin += 1
+                        print(1)
+                if tag == "3":
+                    self_coin += 1
+                    print(1)
+                
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp)+1,lvl,self_coin,tag))
+                f.close()
+                f = open("lvl.txt","r")
+                if lvl_exp+1 >= lvl**4:
+                    lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
+                    lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+                    self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
+                    tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
+                    lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                    lvl_exp = 0
+                    lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+                    f.close()
+                    f = open("lvl.txt","w")
+                    f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp)+1,lvl+1,self_coin,tag))
+                    f.close()
+            else:
+                if message.content.startswith(f"{p}참가"):
+                    f.close()
+                    f = open("lvl.txt","w")
+                    f.write("{}{}:1:1:100:0:\n".format(lvl_read,message.author.id))
+                    f.close()
+                    await message.channel.send(embed = Embed(title = "완료!",description = "이제 게임 명령어를 사용할수 있어요",color= 0x00ff00))
+                else:
+                    pass
+        except:
+            try:
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp)+1,lvl+1,self_coin,tag))
+                f.close()
+            except:
+                pass
+    #준비끝------------------------------------------------
+    global p1
+    global p2
+    global p3
+    global p4
+    global p5
+    global p6
+    global p7
+    global p8
+    global p9
+    global p10
+    global ch2
+    global ran
+    global pl
+    global back
+    if message.content.startswith('5채널'):
+        embed = Embed(title = "채널(도와준사람)",color = 0xff0000)
+        embed.add_field(name="쿠키 유튜브 cookie youtube 🅥  ",value = "[쿠키 유튜브 cookie youtube 🅥](https://www.youtube.com/channel/UC07xngARINB-HLmOe1-c54w)",inline=False)
+        embed.add_field(name="라트Lightning",value = "[라트Lightning](https://www.youtube.com/channel/UCUCLRAy9pflmxgIkWfjvkJQ)",inline=False)
+        embed.add_field(name="SCRATCHER 5-23 ♪",value = "[SCRATCHER 5-23 ♪](https://www.youtube.com/channel/UCj2ikAHEOZNmLnA4ER7_8Fw)",inline=False)
+        embed.add_field(name="마딜MadillTV",value = "[마딜MadillTV](https://www.youtube.com/channel/UCMlwgUQcycyX_sIiab8BNLw)",inline=False)
+        embed.add_field(name="준작가",value = "[준작가](https://www.youtube.com/channel/UCIHxe3D1uTuV63t4NmeYReQ)",inline=False)
+        embed.add_field(name="잡다한 시바견",value = "[잡다한 시바견](https://www.youtube.com/channel/UCT4zLr_r_S7rP8LxOc4uwIw)",inline=False)
+        embed.add_field(name="ROBLOX-뉴비🅥",value = "[ROBLOX-뉴비🅥](https://www.youtube.com/c/ROBLOX%EB%89%B4%EB%B9%84/channels)",inline=False)
+        await message.channel.send(embed = embed)
+
+
+    if message.content.startswith('5도로로'):
+        await message.channel.send('인성문제있음')
+    if message.content.startswith('5번역기'):
+        await message.channel.send('한국봇이라불가능')
+    if message.content.startswith('5마딜'):
+        await message.channel.send('마(른)딜')
+
+    if message.content.startswith(f"{p}가위"):
+        rsp = randint(1,3)
+        if rsp == 1:
+            await message.channel.send("가위(비김)")
+        if rsp == 2:
+            await message.channel.send("바위(인간 패배)")
+        if rsp == 3:
+            await message.channel.send("보(인간 승)")
+    if message.content.startswith(f"{p}바위"):
+        rsp = randint(1,3)
+        if rsp == 1:
+            await message.channel.send("가위(인간 승)")
+        if rsp == 2:
+            await message.channel.send("바위(비김)")
+        if rsp == 3:
+            await message.channel.send("보(인간 패배)")
+    if message.content.startswith(f"{p}보"):
+        rsp = randint(1,3)
+        if rsp == 1:
+            await message.channel.send("가위(인간 패배)")
+        if rsp == 2:
+            await message.channel.send("바위(인간 승)")
+        if rsp == 3:
+            await message.channel.send("보(비김)")
+    if message.content.startswith("무야호"):
+        muyato1 = randint(1,2)
+        if muyato1 == 1:
+            await message.channel.send("그만큼 신나시다는거지~")
+        if muyato1 == 2:
+            await message.channel.send("그만큼 반가우시다는거지~")
+
+    if message.content.startswith(f"{p}투표"):
+        await message.delete()
+        vote = message.content[4:].split("/")
+        for i in range(2,len(vote)):
+            embed = Embed(title ="투표:{}({})".format(vote[1],i-1),color = 0x00ff00,description = "{}".format(vote[i]))
+            embed.set_footer(text = "by - {}".format(message.author.name))
+            text= await message.channel.send(embed=embed)
+            await text.add_reaction('<:good:905078721881452565>')
+            await text.add_reaction('<:nooo:905078780421369946>')
+
+    if message.content.startswith(f"{p}5-23"):
+        await message.channel.send("babo babo babo babo babo")
+    if message.content.startswith(f"{p}청소"):
+        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.manage_messages:
+            num = message.content.split(" ")[1]
+            if num == "모두":
+                num = 9999999999999999999999999999999999999999999999
+                int(num)
+                await message.delete()
+                await message.channel.purge(limit = num)
+                embed = Embed(title ="모든메세지가 삭제 되었습니다",color = 0x000fff)
+                embed.set_footer(text = "by - {}".format(message.author.name))
+                await message.channel.send(embed=embed)
+            else:
+                num = int(num)
+                if num >= 9999999999999999999999999999999999999999999999:
+                    num = 9999999999999999999999999999999999999999999999
+                await message.delete()
+                await message.channel.purge(limit = num)
+                embed = Embed(title ="메세지{}개가 삭제 되었습니다".format(num),color = 0x000fff)
+                embed.set_footer(text = "by - {}".format(message.author.name))
+                await message.channel.send(embed=embed)
+        else:
+            embed = Embed(title ="{}님은 5청소를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
+            await message.channel.send(embed=embed)
+    if message.content.startswith(f"{p}clear") or message.content.startswith(f"{p}c"):
+        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.manage_messages:
+            num = int(message.content.split(" ")[1])
+            await message.delete()
+            await message.channel.purge(limit = num)
+        else:
+            embed = Embed(title ="{}님은 5clear를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
+            await message.channel.send(embed=embed)
+
+    if message.content.startswith(f"{p}공지"):
+        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.administrator:
+            await message.delete()
+            text1 = message.content[4:].split("/")
+            embed = Embed(title ="공지:{}".format(text1[1]),color = 0xff0000,description = text1[2])
+            embed.set_footer(text = "by - {}".format(message.author.name))
+            await message.channel.send(embed=embed)
+        else:
+            embed = Embed(title ="{}님은 5공지를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
+            await message.channel.send(embed=embed)
+    if message.content.startswith(f"{p}수학"):
+        embed = Embed(title = "수학",
+        description ="""
+sin 각도
+cos 각도
+tan 각도
+""",
+        color = 0x00ff00)
+        await message.channel.send(embed = embed)
+    if message.content.startswith("sin"):
+        s = message.content[4:]
+        s = int(s)
+        embed = Embed(title = "sin {} = {}".format(s , sin(s)) , color = 0xff0000)
+        await message.channel.send(embed = embed)
+
+    if message.content.startswith("cos"):
+        co = message.content[4:]
+        co = int(co)
+        embed = Embed(title = "cos {} = {}".format(co , cos(co)) , color = 0xff0000)
+        await message.channel.send(embed = embed)
+
+    if message.content.startswith("tan"):
+        t = message.content[4:]
+        t = int(t)
+        embed = Embed(title = "tan {} = {}".format(t , tan(t)) , color = 0xff0000)
+        await message.channel.send(embed = embed)
+
+    if message.content.startswith(f"{p}주사위"):
+        r = message.content[5:].split("/")
+        r_int = randint(int(r[1]),int(r[2]))
+        if r_int == r[1]: 
+            color_random = 0x000000
+        elif r_int == r[2]: 
+            color_random = 0xff0000
+        else : 
+            color_random = 0x00ff00
+        await message.delete()
+        embed = Embed(title = "{}님이 주사위를던짐니다".format(message.author.name) , description = "나온수 : {}".format(r_int) , color = color_random)
+        embed.set_footer(text = "랜덤 : {}~{}".format(int(r[1]),int(r[2])))
+        await message.channel.send(embed = embed)
+
+    if message.content.startswith(f"{p}랜덤"):
+        r = message.content[5:].split("/")
+        await message.delete()
+        embed = Embed(title = "{}님의 선택!".format(message.author.name) , description = "결과 : {}".format(choice(r)) , color = 0x00ffff)
+        embed.set_footer(text = "랜덤 : {}".format(r))
+        await message.channel.send(embed = embed)
+
+    if message.content.startswith(f"{p}도배"):
+        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.administrator:
+            text2 = message.content[4:].split("/")
+            await message.delete()
+            embed = Embed(title = f"{p}도배",description = str(text2[1])*int(text2[2]),color = 0xff00ff)
+            embed.set_footer(text = "by - {}".format(message.author.name))
+            await message.channel.send(embed = embed)
+        else:
+            embed = Embed(title ="{}님은 5도배를 사용할권한이 없습니다".format(message.author.name),color = 0x000fff)
+            await message.channel.send(embed=embed)
+    if message.content.startswith(f"{p}정보"):
+        try: 
+            user = message.mentions[0]
+        except:
+            user = message.author
+        req = requests.get(f"https://koreanbots.dev/api/v2/users/{user.id}").json()
+        bots = ""
+        try:
+            for bot in req['data']['bots']:
+                bots = f"{bots}[{bot['name']}]({bot['url']})\n"
+        except:
+            pass
+        if bots == "":
+            bots = "없음"
+        user_ = str(datetime.datetime.utcfromtimestamp(((int(user.id) >> 22) + 1420070400000) / 1000))
+        embed = Embed(title = f"__{user}__님의 정보")
+        embed.add_field(name = "이름" , value = user.name,inline=True)
+        embed.add_field(name = "별명" , value = user.display_name,inline=True)
+        embed.add_field(name = "아이디" , value = user.id,inline=True)
+        embed.add_field(name = "소유한 봇" , value = bots,inline=True)
+        embed.add_field(name="가입일",value=f"{user_[:4]}년{user_[5:7]}월{user_[8:10]}일")
+        embed.set_thumbnail(url = user.avatar)
+        await message.channel.send(embed = embed)
+
+    if message.content.startswith(f"{p}핑"):
+        ping = int(round(client.latency * 1000))
+        embed = Embed(title = "핑", description = ("핑 : {}ms").format(ping),color = random_color())
+        if ping <= 200 and ping > 100:
+            embed.add_field(name = "보통 :yellow_square:", value = "by - {}".format(message.author.name))
+        elif ping <= 100:
+            embed.add_field(name = "정상 :green_square:" ,value = "by - {}".format(message.author.name))
+        elif ping > 200:
+            embed.add_field(name = "비정상 :red_square:" ,value = "by - {}".format(message.author.name))
+        await message.channel.send(embed = embed)
+#윷놀이--------------------------------------------------
+    if message.content.startswith("!봇"):
+        if message.author.id == scratcher :
+            await message.delete()
+            text3 = message.content[3:]
+            await message.channel.send(text3)
+
+    if message.content.startswith('5답변') or message.content.startswith('5답장'):
+        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five:
+            msg = message.content[4:].split("/")[1]
+            await message.channel.send(f"```답변/답장 을 성공하였습니다\n내용:{msg}```")
+            try:
+                member = message.mentions[0]
+                embed = Embed(title=f"{message.author.name}님이 당신께 답변을 보냈습니다", description=msg,timestamp=message.created_at, color = 0x5F00FF)
+                await member.send(embed=embed)
+            except:
+                member = utils.get(client.get_all_members(),id = int(message.content[4:].split("/")[0]))
+                embed = Embed(title=f"{message.author.name}님이 당신께 답변을 보냈습니다", description=msg,timestamp=message.created_at, color = 0x5F00FF)
+                await member.send(embed=embed)
+            await message.delete()
+        else:
+            await message.channel.send("관리자가 아닙니다")
+    
+    if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
+        f = open("svr.txt","r")
+        if (str(message.guild.id) in str(f.read())) == False:
+            await message.add_reaction('<:xx:905014703577772063>')
+            f.close()
+        
+    if message.content.startswith(f"{p}슬로우"):
+        if message.author.guild_permissions.administrator:
+            number = message.content.split(" ")[1]
+            try:
+                if number in "0":
+                    await message.channel.edit(slowmode_delay=0)
+                    embed1 = Embed(title=f"채널 슬로우 모드를 {number}초로 설정했습니다!",color=0xFF00DD)
+                    await message.reply(embed=embed1)
+                elif int(number) > 21600 or int(number) <= 0:
+                    raise commands.BadArgument
+                else:
+                    await message.channel.edit(slowmode_delay=float(number))
+                    embed1 = Embed(title=f"채널 슬로우 모드를 {number}초로 설정했습니다!",color=0xFF00DD)
+                    await message.reply(embed=embed1)
+            except:
+                await message.reply(embed=Embed(title = "...",description = "정수와0만 사용할수있어요!"))
+        else:
+            embed2= Embed(title="명령어를 사용할 수 있는 권한이 없어요!", color=0xFF0000)
+            await message.channel.send(embed=embed2)
+
+    if message.content.startswith(f"{p}현재"):
+        y = str(datetime.datetime.now())[:4]
+        m = int(str(datetime.datetime.now())[11:13])
+        y_1 = int(y[3:])
+        y_2 = int(y)%12
+
+        if y_1 == 4:
+            t_1 = "갑"
+        if y_1 == 5:
+            t_1 = "을"
+        if y_1 == 6:
+            t_1 = "병"
+        if y_1 == 7:
+            t_1 = "정"
+        if y_1 == 8:
+            t_1 = "무"
+        if y_1 == 9:
+            t_1 = "기"
+        if y_1 == 0:
+            t_1 = "경"
+        if y_1 == 1:
+            t_1 = "신"
+        if y_1 == 2:
+            t_1 = "임"
+        if y_1 == 3:
+            t_1 = "계"
+
+        if y_2 == 4:
+            t_2 = "자"
+        if y_2 == 5:
+            t_2 = "축"
+        if y_2 == 6:
+            t_2 = "인"
+        if y_2 == 7:
+            t_2 = "묘"
+        if y_2 == 8:
+            t_2 = "진"
+        if y_2 == 9:
+            t_2 = "사"
+        if y_2 == 10:
+            t_2 = "오"
+        if y_2 == 11:
+            t_2 = "미"
+        if y_2 == 0:
+            t_2 = "신"
+        if y_2 == 1:
+            t_2 = "유"
+        if y_2 == 2:
+            t_2 = "술"
+        if y_2 == 3:
+            t_2 = "해"
+        t_all = str(t_1+t_2+"년")
+
+        if "갑" in t_all[:1]:
+            t_all+="(甲"
+        if "을" in t_all[:1]:
+            t_all+="(乙"
+        if "병" in t_all[:1]:
+            t_all+="(丙"
+        if "정" in t_all[:1]:
+            t_all+="(丁"
+        if "무" in t_all[:1]:
+            t_all+="(戊"
+        if "기" in t_all[:1]:
+            t_all+="(己"
+        if "경" in t_all[:1]:
+            t_all+="(庚"
+        if "신" in t_all[:1]:
+            t_all+="(辛"
+        if "임" in t_all[:1]:
+            t_all+="(壬"
+        if "계" in t_all[:1]:
+            t_all+="(癸"
+
+        if "자" in t_all[1:]:
+            t_all+="子年)\n**--------띠--------**\n쥐띠"
+        if "축" in t_all[1:]:
+            t_all+="丑年)\n**--------띠--------**\n소띠"
+        if "인" in t_all[1:]:
+            t_all+="寅年)\n**--------띠--------**\n범띠(호랑이띠)"
+        if "묘" in t_all[1:]:
+            t_all+="卯年)\n**--------띠--------**\n토끼띠"
+        if "진" in t_all[1:]:
+            t_all+="辰年)\n**--------띠--------**\n용띠"
+        if "사" in t_all[1:]:
+            t_all+="巳年)\n**--------띠--------**\n뱀띠"
+        if "오" in t_all[1:]:
+            t_all+="午年)\n**--------띠--------**\n말띠"
+        if "미" in t_all[1:]:
+            t_all+="未年)\n**--------띠--------**\n양띠"
+        if "신" in t_all[1:]:
+            t_all+="申年)\n**--------띠--------**\n원숭이띠"
+        if "유" in t_all[1:]:
+            t_all+="酉年)\n**--------띠--------**\n닭띠"
+        if "술" in t_all[1:]:
+            t_all+="戌年)\n**--------띠--------**\n개띠(강아지띠)"
+        if "해" in t_all[1:]:
+            t_all+="亥年)\n**--------띠--------**\n돼지띠"
+
+        if m >= 23 and m < 1:
+            t_all+="\n**-------시간-------**\n자시(子時) : 쥐가 제일 열심히 뛰어 다니는 때"
+        if m >= 1 and m < 3:
+            t_all+="\n**-------시간-------**\n축시(丑時) : 밤새 풀을 먹은 소가 한참 반추하며 아침 밭갈이 준비를 할 때"
+        if m >= 3 and m < 5:
+            t_all+="\n**-------시간-------**\n인시(寅時) : 하루 중 호랑이가 제일 흉악한 때"
+        if m >= 5 and m < 7:
+            t_all+="\n**-------시간-------**\n묘시(卯時) : 해뜨기 직전에 달이 아직 중천에 걸려 있어 그 속에 옥토끼가 보이는때"
+        if m >= 7 and m < 9:
+            t_all+="\n**-------시간-------**\n진시(辰時) : 용들이 날면서 강우 준비를 하는 때"
+        if m >= 9 and m < 11:
+            t_all+="\n**-------시간-------**\n사시(巳時) : 이 시간에 뱀은 자고 있어 사람을 해치는 일이 없는 때"
+        if m >= 11 and m < 13:
+            t_all+="\n**-------시간-------**\n오시(午時) : 이 시간에는 고조에 달했던 ‘양기’가 점점 기세를 죽이며 ‘음기’ 가 머리를 들기 시작하는데, 말은 땅에서 달리고 땅은 ‘음기’이므로 말을 ‘음기’의 동물로 보고 이 시각을 말과 연계시킨다."
+        if m >= 13 and m < 15:
+            t_all+="\n**-------시간-------**\n미시(未時) : 양이 이때 풀을 뜯어먹어야 풀이 재생하는데 해가 없다"
+        if m >= 15 and m < 17:
+            t_all+="\n**-------시간-------**\n신시(申時) : 이 시간에 원숭이가 울음소리를 제일 많이 낸다."
+        if m >= 17 and m < 19:
+            t_all+="\n**-------시간-------**\n유시(酉時) : 하루 종일 모이를 쫓던 닭들이 둥지에 들어가는 때"
+        if m >= 19 and m < 21:
+            t_all+="\n-------시간-------\n술시(戌時) : 날이 어두워지니 개들이 집을 지키기 시작하는 때"
+        if m >= 21 and m < 0 or m >= 21 and m < 24:
+            t_all+="\n**-------시간-------**\n해시(亥時) : 이 시간에 돼지가 가장 단잠을 자고 있는 시간이다."
+        t_all = "**-------년도-------**\n"+t_all
+        await message.channel.send(embed = Embed(title = "지금은?",description= t_all,color = random_color()))
+    
+    if message.content.startswith(f"{p}타이머"):
+        timer = await message.channel.send(embed = Embed(title=">>> {}님의 타이머__{}초__".format(message.author,message.content.split(" ")[1]),description=">>> {}".format(message.content.split(" ")[1]),color = random_color()))
+        for i in range(int(timer.embeds[0].description[4:])):
+            await asyncio.sleep(1)
+            timer_time = int(timer.embeds[0].description[4:])
+            timer_time -= 1
+            timer = await timer.edit(embed = Embed(title=timer.embeds[0].title,description=">>> {}".format(timer_time),color = random_color()))
+        timer = await timer.edit(embed = Embed(title=timer.embeds[0].title,description=">>> TIMEOVER!",color = 0xff0000))
+    
+    if message.content.startswith(f"{p}코로나"):
+        e = await message.channel.send(embed = Embed(title="사이트를 불러오는중...",color = random_color()))
+        req = requests.get("https://api.corona-19.kr/korea/?serviceKey=5vH8sL1K6PGxkbIMla4r3jnAEgRuZYFqi").json()
+        await e.edit(embed = Embed(title="기준일을 불러오는중...",color = random_color()))
+        기준 = "{}".format(req['updateTime'])
+        await e.edit(embed = Embed(title="확진환자를 불러오는중...",color = random_color()))
+        확진환자 = "{}".format(req['TotalCase'])
+        await e.edit(embed = Embed(title="격리해제를 불러오는중...",color = random_color()))
+        격리해제 = "{} + {}".format(req['TotalRecovered'] , req['TodayRecovered'])
+        await e.edit(embed = Embed(title="치료중을 불러오는중...",color = random_color()))
+        치료중 = "{} + {}".format(req['NowCase'] , req['TotalCaseBefore'])
+        await e.edit(embed = Embed(title="사망을 불러오는중...",color = random_color()))
+        사망 = "{} + {}".format(req['TotalDeath'] , req['TodayDeath'])
+        await e.edit(embed = Embed(title="합성중...",color = random_color()))
+        embed = Embed(title=f">>> 기준일 | {기준}",description=f">>> **확진환자 | {확진환자}\n격리해제 | {격리해제}\n치료중(격리중) | {치료중}\n사망 | {사망}**",color = random_color(),url="http://ncov.mohw.go.kr/")
+        embed.set_thumbnail(url ="https://api.corona-19.kr/")
+        await e.edit(embed = embed)
+    
+    if message.content.startswith(f"{p}만들기"):
+        if message.content == f"{p}만들기" or message.content == f"{p}만들기 ":
+            embed = Embed(title=f"{p}만들기 사용방법")
+            embed.add_field(name = "기본규칙",value=">>> 1.메세자끝에는 세미콜론(**;**)이들어가야합니다\n2.명령어를 사용하려면 명령어뒤에 **띄어쓰기** 를해야합니다",inline=True)
+            embed.add_field(name = "제목",value=">>> 제목은 뒤에값이 들어갑니다 말그대로 임베드의 제목입니다\nex)!만들기 제목 테스트;",inline=True)
+            embed.add_field(name = "설명",value=">>> 설명은 제목과같이 뒤에값이 들어갑니다 하지만 제목보다 크기가작습니다\nex)!만들기 설명 테스트;",inline=True)
+            embed.add_field(name = "색상",value=">>> 색상은 제목 또는 설명이 있어야 사용가능합니다 색상은 0x0000ff(0x|(R)00|(G)00|(B)ff|)로 나타냅니다\nex)!만들기 설명 테스트;색상 0x110033;",inline=True)
+            embed.add_field(name = "사진",value=">>> 이미지는 이미지 + 사진 형식으로 사용할수 있습니다\nex)!만들기 이미지 ``사진``;",inline=True)
+            embed.add_field(name = "이미지",value=">>> 사진은 사진 + 사진 형식으로 사용할수 있습니다\nex)!만들기 사진 ``사진``;",inline=True)
+            embed.add_field(name = "만든날",value=">>> 만든날은 제목 또는 설명이 있어야 사용가능하며 뒤에 값이안들어갑니다\nex)!만들기 설명 테스트;만든날;",inline=True)
+            embed.add_field(name = "답변/답장방지",value=">>> 답변을 방장을 방지합니다\nex)!만들기 설명 테스트;답변/답장방지;",inline=True)
+            await message.channel.send(embed = embed)
+        else:
+            try:
+                color = 0x454545
+                description = ""
+                title = ""
+                timestamp = ""
+                img1 = ""
+                img2 = ""
+                if "제목" in message.content:
+                    title = message.content.split("제목 ")[1].split(";")[0]
+                if "설명" in message.content:
+                    description = message.content.split("설명 ")[1].split(";")[0]
+                if "색상" in message.content:
+                    color = str(message.content.split("색상 ")[1].split(";")[0])
+                    try:
+                        color = color.replace(" ","")
+                    except:
+                        pass
+                    color = eval(color)
+                if "만든날" in message.content:
+                    timestamp = datetime.datetime.now()
+                if "이미지" in message.content:
+                    img1 = str(message.attachments[0])
+                if "사진" in message.content:
+                    img2 = str(message.attachments[0])
+                if "답변방지" in message.content or "답장방지" in message.content:
+                    a = 1
+                else:
+                    a = 0
+                embed = Embed(title=title,description=description,color=color,timestamp=timestamp)
+                embed.set_thumbnail(url=img1)
+                embed.set_image(url=img2)
+                if a == 0:
+                    await message.reply(embed = embed)
+                else:
+                    await message.channel.send(embed = embed)
+            except:
+                await message.reply(embed = Embed(title="오류!",description="명령어를 제대로 사용해주세요",color = 0xff0000))
+    
+    if message.content.startswith(f"{p}음소거"):
+        if message.author.guild_permissions.administrator:
+            user = message.mentions[0]
+            if "음소거" in str(user.roles):
+                nope = 1
+            else:
+                nope = 0
+            if nope == 0:
+                for i in user.roles:
+                    try:
+                        await user.remove_roles(i)
+                    except:
+                        pass
+                await user.add_roles(utils.get(message.guild.roles,name = "음소거"))
+                await message.reply("음소거 추가완료")
+            else:
+                await user.remove_roles(utils.get(message.guild.roles,name = "음소거"))
+                await message.reply("음소거 제거완료")
+        else:
+            await message.reply("권한이없어요")
+    if message.content.startswith(f"{p}유튜브"):
+        try:
+            txt = str(message.content).replace(f"{p}유튜브","")
+            if str(txt[0]) == " ":
+                txt = txt[1:]
+            else:
+                pass
+            res = requests.get(f"https://youtube.googleapis.com/youtube/v3/search?q={txt}&part=snippet&type=channel&maxResults=50&key={yt_api_key}&alt=json",headers={'User-Agent': 'Mozilla/5.0'}).json()
+            for item in sorted(res['items'] , key=lambda x:x['snippet']['publishedAt']):
+                if txt in item['snippet']['title']:
+                    nopeapi = 0
+                    if str(message.author.name[:2]) in str(item['snippet']['title']):
+                        title = item['snippet']['title']
+                        link = "https://www.youtube.com/channel/{}".format(item['snippet']['channelId'])
+                        description = item['snippet']['description'] + "ㅤ"
+                        img = item['snippet']['thumbnails']['high']['url']
+                        publishTime = item['snippet']['publishTime']
+                        embed = Embed(title=f"유튜버 - {title}님의정보",color = random_color())
+                        embed.set_thumbnail(url=img)
+                        embed.add_field(name="설명",value=description)
+                        embed.add_field(name="채널 개설일",value=publishTime)
+                        link = link.replace("ㅤ","").replace(" ","")
+                        embed.add_field(name="채널링크",value=f"[링크]({link})")
+                        await message.reply(embed = embed)
+                        nopeapi = 1
+                        break
+                    else:
+                        nopeapi = 0
+                else:
+                    nopeapi = 0
+            if nopeapi==0:
+                res = requests.get(f"https://youtube.googleapis.com/youtube/v3/search?q={txt}&part=snippet&type=channel&key={yt_api_key}&alt=json",headers={'User-Agent': 'Mozilla/5.0'}).json()
+                for item in sorted(res['items'] , key=lambda x:x['snippet']['publishedAt']):
+                    if txt in item['snippet']['title']:
+                        title = item['snippet']['title']
+                        link = "https://www.youtube.com/channel/{}".format(item['snippet']['channelId'])
+                        description = item['snippet']['description'] + "ㅤ"
+                        img = item['snippet']['thumbnails']['high']['url']
+                        publishTime = item['snippet']['publishTime']
+                        embed = Embed(title=f"유튜버 - {title}님의정보",color = random_color())
+                        embed.set_thumbnail(url=img)
+                        embed.add_field(name="설명",value=description)
+                        embed.add_field(name="채널 개설일",value=publishTime)
+                        link = link.replace("ㅤ","").replace(" ","")
+                        embed.add_field(name="채널링크",value=f"[링크]({link})")
+                        await message.reply(embed = embed)
+                        nopeapi2 = 1
+                        break
+                    else:
+                        nopeapi2 = 0
+                if nopeapi2 == 0:
+                    for item in sorted(res['items'] , key=lambda x:x['snippet']['publishedAt']):
+                        title = item['snippet']['title']
+                        link = "https://www.youtube.com/channel/{}".format(item['snippet']['channelId'])
+                        description = item['snippet']['description'] + "ㅤ"
+                        img = item['snippet']['thumbnails']['high']['url']
+                        publishTime = item['snippet']['publishTime']
+                        embed = Embed(title=f"유튜버 - {title}님의정보",color = random_color())
+                        embed.set_thumbnail(url=img)
+                        embed.add_field(name="설명",value=description)
+                        embed.add_field(name="채널 개설일",value=publishTime)
+                        link = link.replace("ㅤ","").replace(" ","")
+                        embed.add_field(name="채널링크",value=f"[링크]({link})")
+                        await message.reply(embed = embed)
+                        break
+        except:
+            await message.reply(embed = Embed(title="오류!",description="채널을 찾을수 없습니다",color=0xff0000))
+    if message.content.startswith(f"{p}서버정보"):
+        try:
+            bot = 0
+            for i in range(message.guild.member_count):
+                if message.guild.members[i].bot:
+                    bot += 1
+            ran_col = random_color()
+            embed = Embed(title=f'"{message.guild.name}"의 정보',color = ran_col)
+            embed.set_thumbnail(url=message.guild.icon)
+            embed.add_field(name="서버주인",value=str(message.guild.owner.mention)+"ㅤ")
+            embed.add_field(name="인증단계",value=(str(message.guild.verification_level)+"ㅤ").replace("none","없음").replace("low","낮음").replace("medium","중간").replace("high","높음").replace("highest","매우 높음") )
+            user_ = str(datetime.datetime.utcfromtimestamp(((int(message.guild.id) >> 22) + 1420070400000) / 1000))
+            embed.add_field(name="생성일",value=f"{user_[:4]}년{user_[5:7]}월{user_[8:10]}일ㅤ")
+            embed.add_field(name="맴버",value=f"{message.guild.member_count}명ㅤ")
+            embed.add_field(name="봇",value=f"{bot}명ㅤ")
+            embed.add_field(name="순맴버",value=f"{message.guild.member_count-bot}명ㅤ")
+            a = await message.channel.send(embed = embed)
+            all_emoji = ""
+            for i in range(len(message.guild.emojis)):
+                all_emoji +=" <:{}:{}> ".format(message.guild.emojis[i].name,message.guild.emojis[i].id)
+            try:
+                await message.channel.send(embed = Embed(title = "이모지",description=all_emoji,color = ran_col))
+            except:
+                await message.channel.send(embed = Embed(title = "이모지가 너무많아서 숫자로 불렀어요!",description=len(message.guild.emojis)+"개",color = ran_col))
+        except:
+            await message.channel.send(embed = Embed(title="봇에 권한이 없어요",color = 0xff0000))
+    
+#게임------------------------------------------------------------
+    if message.content.startswith(f"{p}레벨"):
+        try:
+            try:
+                user = message.mentions[0]
+                f = open("lvl.txt","r+")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                embed = Embed(title = f"{user.name}님의 레벨",color = random_color())
+                embed.add_field(name = "경험치", value = "{}/{}".format(lvl**4,lvl_exp+1) )
+                embed.add_field(name = "레벨", value = lvl)
+                embed.add_field(name="코인",value=self_coin)
+                embed.add_field(name="칭호",value=str(tag).replace("0","없음").replace("1","초보모험가").replace("2","!운!").replace("3","부자").replace("4","쉴더").replace("5","어택커") )
+                await message.channel.send(embed = embed)
+            except:
+                embed = Embed(title = f"{message.author.name}님의 레벨",color = random_color())
+                embed.add_field(name = "경험치", value = "{}/{}".format(lvl**4,lvl_exp+1) )
+                embed.add_field(name = "레벨", value = lvl)
+                embed.add_field(name="코인",value=self_coin)
+                embed.add_field(name="칭호",value=str(tag).replace("0","없음").replace("1","초보모험가").replace("2","!운!").replace("3","부자").replace("4","쉴더").replace("5","어택커") )
+                await message.channel.send(embed = embed)
+        except:
+            await message.channel.send(embed = Embed(title = "오류가 났어요 다시 시도해주세요 ``5참가``를 안했다면 ``5참가``를 해주세요",color=0xff0000))
+    
+    if message.content.startswith(f"{p}도박"):
+        try:
+            int_coin = int(message.content.split(" ")[1])
+            if "-" in str(int_coin):
+                int_coin *= -1
+            f = open("lvl.txt","r")
+            lvl_read = f.read()
+            lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
+            lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+            self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
+            tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
+            lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+            f.close()
+            try:
+                if self_coin >= int_coin:
+                    if randint(1,2) == 2:
+                        if tag == "5":
+                            self_coin += int_coin*3
+                            await message.reply(embed = Embed(title="도박성공!",description="{}=>{}".format(self_coin-int_coin*3,self_coin),color=random_color()))
+                        else:
+                            self_coin += int_coin
+                            await message.reply(embed = Embed(title="도박성공!",description="{}=>{}".format(self_coin-int_coin,self_coin),color=random_color()))
+                    else:
+                        if tag == "4":
+                            if randint(1,2) == 2:
+                                await message.reply(embed = Embed(title="아쉽게 도박에서 실패한줄 알았지만 막아냈어요!",description="{}=>{}".format(self_coin,self_coin),color=random_color()))
+                            else:
+                                self_coin -= int_coin
+                                await message.reply(embed = Embed(title="아쉽게 도박에서 실패했어요ㅠㅠ",description="{}=>{}".format(self_coin+int_coin,self_coin),color=random_color()))
+                        else:
+                            self_coin -= int_coin
+                            await message.reply(embed = Embed(title="아쉽게 도박에서 실패했어요ㅠㅠ",description="{}=>{}".format(self_coin+int_coin,self_coin),color=random_color()))
+                else:
+                    await message.reply(embed = Embed(title="코인이 부족합니다;; '5벌기'를 사용하세요",description=f"코인:{self_coin}",color=0xff0000))
+            except:
+                await message.reply(embed = Embed(title="오류!",description="숫자입력을 해주세요! ``5참가``를 안했다면 ``5참가``를 해주세요",color=0xff0000))
+            f = open("lvl.txt","w")
+            f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp),lvl,self_coin,tag))
+            f.close()
+        except:
+            await message.reply(embed = Embed(title = "오류!",description="숫자를 써주세요! 만약 ``5참가``를 안했다면 ``5참가``를 해주세요",color=0xff0000))
+            return()
+
+    if message.content.startswith(f"{p}상점"):
+        lvl_exp1 = lvl_exp**4
+        embed = Embed(title="상점",description=f"닉네임:{message.author.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+        embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+        embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+        embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+        embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+        embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+        embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+        shop = await message.channel.send(embed = embed)
+        await shop.add_reaction("🔘")
+        await shop.add_reaction("🟥")
+        await shop.add_reaction("🟧")
+        await shop.add_reaction("🟨")
+        await shop.add_reaction("🛡")
+        await shop.add_reaction("⚔")
+
+    if message.content.startswith(f"{p}입금"):
+        try:
+            user = message.mentions[0].id
+            user1 = message.mentions[0]
+            print(str(message.content[26:]).replace(" ",""))
+            int_coin = int(str(message.content[26:]).replace(" ",""))
+            f = open("lvl.txt","r+")
+            lvl_read = f.read()
+            lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
+            lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+            self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
+            tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
+            lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+            f.close()
+            if str(user) in str(lvl_txt):
+                if self_coin >= int_coin:
+                    if ("-" in str(int_coin)) == False:
+                        f = open("lvl.txt","w")
+                        f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,lvl_exp,lvl,self_coin-int_coin,tag))
+                        f.close()
+                        f = open("lvl.txt","r+")
+                        lvl_read = f.read()
+                        lvl_exp = int(lvl_read.split(str(user))[1].split(":")[1])
+                        lvl = int(lvl_read.split(str(user))[1].split(":")[2])
+                        self_coin = int(lvl_read.split(str(user))[1].split(":")[3])
+                        tag = lvl_read.split(str(user))[1].split(":")[4]
+                        lvl_txt = lvl_read.replace("\n"+str((str(user)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                        f.close()
+                        f = open("lvl.txt","w")
+                        f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user,lvl_exp,lvl,self_coin+int_coin,tag))
+                        f.close()
+                        await message.reply(embed = Embed(title=f"__{user1}__ 님께 {int_coin}코인을 입금완료했습니다!",color = random_color()))
+                        await user1.send(embed = Embed(title=f"{int_coin}입금됨",description=f"{user1.mention}님 __{message.author}__ 님이 당신께 입금을했어요!",color=random_color()))
+                    else:
+                        await message.reply(embed = Embed(title="'-'를사용하면 안되요;;",description=f"코인:{self_coin}",color=0xff0000))
+                else:
+                    await message.reply(embed = Embed(title="코인이 부족해요;;",description=f"코인:{self_coin}",color=0xff0000))
+            else:
+                await message.reply(embed = Embed(title="오류!",description=f"{user1}님의 정보가 없어요",color=0xff0000))
+        except:
+            await message.reply(embed = Embed(title="오류!",description=f"{user1}님의 정보가 없거나 코드에 오류가있어요!",color=0xff0000))
+            f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp),lvl,self_coin,tag))
+            f.close()
+    if message.content.startswith(f"{p}킥"):
+        if message.author.guild_permissions.kick_members:
+            user = message.mentions[0]
+            msg = (message.content[25:])
+            await message.delete()
+            await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
+            await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
+            await user.kick()
+        else:
+            await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
+    if message.content.startswith(f"{p}밴"):
+        if message.author.guild_permissions.ban_members:
+            user = message.mentions[0]
+            msg = (message.content[25:])
+            await message.delete()
+            await user.send(embed = Embed(title=f"{message.author}님이 당신을 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
+            await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
+            await user.ban()
+        else:
+            await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
+    
+    if message.content.startswith(f"{p}버튼"):
+        await message.channel.send("안녕",view = org_but())
+    
+    if message.content.startswith(f"{p}벌기"):
+        await message.channel.send(embed = Embed(title="버튼을 클릭해서 돈을 버세요"),view = coin_up())
+    if message.content.startswith(f"{p}봇정보"):
+        await message.channel.send("a",view = DropdownView())
+    
+    if message.content.startswith(f"{p}추가"):
+        if message.author.guild_permissions.administrator:
+            user = message.mentions[0]
+            await user.add_roles(utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0])))
+            await message.channel.send(embed = Embed(title = "역할추가!",description = "{}님에게서 **{}** 역할을 추가했어요".format(user.mention,utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0]))),color = 0x00ff00))
+        else:
+            await message.channel.send(embed = Embed(title = "권한이 없어요!",description="__역할관리__ 권한이 필요합니다",color = 0xff0000))
+    if message.content.startswith(f"{p}제거"):
+        if message.author.guild_permissions.administrator:
+            user = message.mentions[0]
+            await user.remove_roles(utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0])))
+            await message.channel.send(embed = Embed(title = "역할제거!",description = "{}님에게서 **{}** 역할을 제거했어요".format(user.mention,utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0]))),color = 0xff0000))
+        else:
+            await message.channel.send(embed = Embed(title = "권한이 없어요!",description="__역할관리__ 권한이 필요합니다",color = 0xff0000))
+    
+    if message.content.startswith(f"{p}이모지"):
+        try:
+            if "a" in str(str(message.content).split("<")[1].split(":")[0]):
+                emoji = (str(message.content).split(":")[2]).replace(">","")
+                emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.gif?size=160"
+                await message.reply(emoji_link)
+            else:
+                emoji = (str(message.content).split(":")[2]).replace(">","")
+                emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
+                await message.reply(emoji_link)
+        except:
+            await message.reply(embed = Embed(title = "오류!",description = "커스텀 이모지가 아닌거 같습니다",color = 0xff0000))
+    
+    if message.content.startswith(f"{p}봇") and ("봇정보" in str(message.content)) == False:
+        try:
+            bot = message.mentions[0]
+            if bot.bot:
+                req = requests.get(f"https://koreanbots.dev/api/v2/bots/{bot.id}").json()
+                if req['data']['status'] == "online": a = "<:online:918491083527311370>"
+                elif req['data']['status'] == "idle": a = "<:idle:918492422701457449>"
+                elif req['data']['status'] == "dnd": a = "<:dnd:918492948667175012>"
+                elif req['data']['status'] == "streaming": a = "<:live:918278975908905001>"
+                elif req['data']['status'] == "offline": a = "<:offline:918490930699456563>"
+                embed = Embed(title=f"{bot} {a} 봇의 정보",color = random_color())
+                embed.add_field(name = "접두사",value = f">>> {req['data']['prefix']}",inline=False)
+                embed.add_field(name = "소유자",value = f">>> {req['data']['owners'][0]['username']}",inline=False)
+                embed.add_field(name = "라이브러리",value = f">>> {req['data']['lib']}",inline=False)
+                embed.add_field(name = "하트수",value = f">>> {req['data']['votes']}",inline=False)
+                embed.add_field(name = "설명",value = f">>> {req['data']['desc']}",inline=False)
+                embed.add_field(name = "봇초대",value = f">>> [클릭하기]({(req['data']['url'])})",inline=False)
+                embed.add_field(name = "서버초대",value = f">>> [클릭하기](https://discord.com/invite/{(req['data']['discord'])})",inline=False)
+                print(req['data']['bg'])
+                
+                await message.channel.send(embed = embed)
+            else:
+                await message.channel.send(embed = Embed(title="오류!",description="봇이 아니에요!",color = 0xff0000))
+        except:
+            await message.channel.send(embed = Embed(title="오류!",description="봇이 [한국 디스코드봇 리스트](https://koreanbots.dev/) 에 없어요",color = 0xff0000))
+        
+    if message.content.startswith(f"{p}요청"):
+        msg_send = "yes"
+        def check(m):
+            return m.author.id == message.author.id
+
+        a = await message.reply(embed = Embed(color=random_color() , title = "채널 이름을 써주세요" , description="취소하고 싶다면 ``취소``를 보내주세요\n[사용방법](https://youtu.be/QEji3fu1D88)"))
+        msg = await client.wait_for("message" , check=check)
+        name = str(msg.content)
+        name_lower = name.lower()
+        if msg.content == "취소":
+            await a.delete()
+            msg_send = "no"
+
+        await a.edit(embed = Embed(color=random_color() , title = "짧은 설명을 쓰세요" , description="취소하고 싶다면 ``취소``를 보내주세요\n[사용방법](https://youtu.be/QEji3fu1D88)"))
+        msg = await client.wait_for("message" , check=check)
+        short_description = str(msg.content)
+        if msg.content == "취소":
+            await a.delete()
+            msg_send = "no"
+
+        await a.edit(embed = Embed(color=random_color() , title = "길은 설명을 쓰세요" , description="취소하고 싶다면 ``취소``를 보내주세요\n[사용방법](https://youtu.be/QEji3fu1D88)"))
+        msg = await client.wait_for("message" , check=check)
+        description = str(msg.content)
+        if msg.content == "취소":
+            await a.delete()
+            msg_send = "no"
+
+        await a.edit(embed = Embed(color=random_color() , title = "채널 링크를 쓰세요" , description="취소하고 싶다면 ``취소``를 보내주세요\n[사용방법](https://youtu.be/QEji3fu1D88)"))
+        msg = await client.wait_for("message" , check=check)
+        link = str(msg.content)
+        try:
+            await msg.delete()
+        except:
+            pass
+        if msg.content == "취소":
+            await a.delete()
+            msg_send = "no"
+
+        await a.edit(embed = Embed(color=random_color() , title = "채널 이미지 링크를 쓰세요 또는 이미지를 보내세요" , description="취소하고 싶다면 ``취소``를 보내주세요\n[사용방법](https://youtu.be/QEji3fu1D88)"))
+        msg = await client.wait_for("message" , check=check)
+        try:
+            img = str(msg.attachments[0])
+        except:
+            img = str(msg.content)
+        if msg.content == "취소":
+            await a.delete()
+            msg_send = "no"
+            
+        await a.edit(embed = Embed(color=random_color() , title = "디스코드 채널 링크를 쓰세요 없으면 None" , description="취소하고 싶다면 ``취소``를 보내주세요\n[사용방법](https://youtu.be/QEji3fu1D88)"))
+        msg = await client.wait_for("message" , check=check)
+        discord = msg.content
+        try:
+            await msg.delete()
+        except:
+            pass
+        if msg.content == "취소":
+            await a.delete()
+            msg_send = "no"
+        short_description = short_description.replace("\n","\\n")
+        description = description.replace("\n","\\n")
+        json_message = f'''
+```json
+"{name_lower}" : [
+    "name": "{name}",
+    "short_description" : "{short_description}",
+    "description": "{description}",
+    "img": "{img}",
+    "channel": "{link}",
+    "discord": "{discord}",
+    "heart": "0",
+    "tag": "0",
+    "tsgs": "0"
+]
+```'''.replace("[","{").replace("]","}")
+        await a.edit(embed = Embed(title = "전송완료" , description = json_message))
+        if msg_send == "yes":
+            await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 추가요청!",description=f"{json_message}\n>>> id : {message.author.id}\nname : {message.author}"))
+
+#게임-----------------------------------------------------------------------------------------------------------
+    if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
+        await message.channel.send(embed = Embed(title="개발자 : SCRATCHER 5-23♪#9017",description = "개발자서버 : http://discord.5-23.kro.kr/\n봇초대 : http://discord.5-23bot.kro.kr/"))
+#-----------------------------!명령어----------------------------#
+    if message.content.startswith(f"{p}명령어"):
+        embed = Embed(title = "명령어",color = 0x00ff00)
+        embed.add_field(name="기본 명령어 - 1",value="""
+>>> 무야호
+5채널
+5도로로
+5번역기
+5마딜
+5명령어
+5가위
+5바위
+5보
+55-23
+5수학
+""")
+        embed.add_field(name="기본 명령어 - 2",value="""
+>>> 5주사위 /작은수/큰수
+5투표 /이름/항목1/항목2/항목3....
+5랜덤 /항목1/항목2..../항목x
+5도배 /글/개수
+5정보
+5타이머 초
+5현재
+5유튜브 채널이름
+5서버정보
+5활성화여부
+5이모지 커스텀이모지
+5봇 @봇 멘션
+5요청 [한국 유튜버리스트](https://site-main.scratcher5-23.repl.co) 에 유튜버 추가를 요청함
+""")
+        embed.add_field(name="게임 명령어",value="""
+>>> 5벌기
+5도박 숫자
+5레벨 (@멘션)
+5상점
+5입금 @멘션
+5참가
+""")
+        embed.add_field(name="권한필요 명령어",value="""
+>>> 5공지 /이름/글 ```어드민 필요```
+5슬로우 초 ```어드민필요```
+5링크 비활성화 #링크삭제 비활성화 ```어드민 필요```
+5링크 활성화 #링크삭제 활성화 ```어드민 필요```
+5킥 @멘션 사유 ```유저킥 필요```
+5밴 @멘션 사유 ```유저밴 필요```
+5추가 @멘션 @역할 ```어드민```
+5제거 @멘션 @역할 ```어드민```
+""")
+        embed.add_field(name="삭제 명령어",value="""
+>>> 5청소 숫자 ```메세지관리 필요```
+5clear 숫자 ```메세지관리 필요```
+""")
+        embed.add_field(name="음악 명령어",value="""
+>>> 5들어와
+5나가
+5재생 url
+5정지
+""")
+        embed.add_field(name="버튼 명령어",value="""
+>>> 5버튼
+5계산기
+""")
+        embed.add_field(name="셀렉트 명령어",value="""
+>>> 5봇정보
+""")
+        embed.add_field(name="AI",value="""
+>>> //단어 ```핑퐁 빌더 지원```
+""")
+        embed.add_field(name="개발자 명령어",value="""
+>>> 5답변 @멘션/내용
+5답장 @멘션/내용
+""")
+        embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
+        await message.channel.send(embed = embed)
+    if message.content.startswith(f"{p}링크 비활성화"):
+        if message.author.guild_permissions.manage_messages:
+            f = open("svr.txt","r")
+            svr_list = f.read().split("|")
+            for i in range(len(svr_list)+1):
+                try:
+                    if str(message.guild.id) == str(svr_list[i]):
+                        svr_on = 0
+                        break
+                    else:
+                        svr_on = 1
+                except:
+                    pass
+            if svr_on == 1:
+                f.close()
+                f = open("svr.txt","r")
+                svr_txt = f.readline()
+                f.close()
+                f = open("svr.txt","w")
+                f.write((str(svr_txt)+str(message.guild.id)+"|").replace("||","|"))
+                f.close()
+                await message.reply("비활성화 완료")
+            else:
+                print("nope")
+                await message.reply("이미 비활성화 되있어요")
+        else:
+            await message.reply("권한이 없어요")
+
+    if message.content.startswith(f"{p}링크 활성화"):
+        if message.author.guild_permissions.manage_messages:
+            f = open("svr.txt","r")
+            svr_list = f.read().split("|")
+            for i in range(len(svr_list)+1):
+                try:
+                    if str(message.guild.id) == str(svr_list[i]):
+                        svr_on = 0
+                        svr_line = i
+                        break
+                    else:
+                        svr_on = 1
+                except:
+                    pass
+            if svr_on == 0:
+                f.close()
+                f = open("svr.txt","r")
+                svr_list = f.readline().split("|")
+                f.close()
+                f = open("svr.txt","w")
+                svr_list[svr_line] = ""
+                svr_txt = (((((str(svr_list).replace(",","|")).replace("'","")).replace("[","")).replace("]","")).replace(" ","")).replace("||","|")
+                f.write(svr_txt)
+                f.close()
+                await message.reply("활성화 했어요!")
+            else:
+                print("nope")
+                await message.reply("이미 활성화 되있어요")
+        else:
+            await message.reply("권한이 없어요")
+        
+    if message.content.startswith("!활성화여부"):
+        msg = await message.channel.send(embed = Embed(title="활성화여부"))
+        f1 = open("svr.txt","r")
+        if str(message.guild.id) in str(f1):
+            await msg.edit(embed = Embed(title="활성화여부",description="링크삭제 비활성화됨"))
+        else:
+            await msg.edit(embed = Embed(title="활성화여부",description="링크삭제 활성화됨"))
+        f1.close()
+    
+#----------------리액션-----------------#
+@client.event
+async def on_reaction_add(reaction, user):
+    global five
+    message = reaction.message
+    if user.bot == False:
+        if str(reaction.emoji) == "<:xx:905014703577772063>":
+            if user.guild_permissions.manage_messages:
+                if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
+                    await reaction.message.author.send(embed = Embed(title = "메세지 삭제",description = f"{user}님의의해 당신의 [링크]({reaction.message.content}) 가 삭제되었습니다"))
+                    await reaction.message.delete()
+        if str(reaction.message.channel.type) == "private":
+            if str(reaction.emoji) == "<:gongu:905014564507222016>":
+                try:
+                    if str(reaction.message.channel.type) == "private":
+                        embed = Embed(title = f"{user}님이 문의를 하였습니다",description = f"내용 : {reaction.message.content}\n 멘션:{user.mention}\nid:{user.id}",timestamp=reaction.message.created_at)
+                        img = str(message.attachments[0])
+                        try: 
+                            embed.set_image(url = img)
+                        except: 
+                            pass
+                        await client.get_channel(885802901124046848).send(embed = embed)
+                        await message.reply(">>> 문의가 완료되었습니다")
+                        print(1)
+                    else:
+                        print(2)
+                except:
+                    print(0)
+#게임-------------------------------------------------------------------------------------------------------------------------------------------------------
+        if str(reaction.message.author.id) == str(five):
+            if str(reaction.emoji) == "🔘":
+                f = open("lvl.txt","r")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                if self_coin >= 100:
+                    self_coin -= 100
+                    lvl_exp += 10
+                    await reaction.message.edit(f"{user.mention}님이 '경험치병'아이템을 구매했어요!")
+                else:
+                    print("nope1")
+                    await reaction.message.edit("돈이 부족해요;;")
+                lvl_exp1 = lvl**4
+                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+                await reaction.message.edit(embed = embed)
+                f = open("lvl.txt","w")
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
+                f.close()
+                if lvl_exp+1 >= lvl**4:
+                    lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
+                    lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+                    self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
+                    tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
+                    lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                    lvl_exp = 0
+                    lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
+                    f.close()
+                    f = open("lvl.txt","w")
+                    f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp)+1,lvl+1,self_coin,tag))
+                    f.close()
+
+            if str(reaction.emoji) == "🟥":
+                f = open("lvl.txt","r")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                if self_coin >= 200:
+                    self_coin -= 200
+                    tag = 1
+                    await reaction.message.edit(f"{user.mention}님이 '초보'칭호를 구매했어요!")
+                else:
+                    print("nope1")
+                    await reaction.message.edit("돈이 부족해요;;")
+                lvl_exp1 = lvl**4
+                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+                await reaction.message.edit(embed = embed)
+                f = open("lvl.txt","w")
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
+                f.close()
+            
+            if str(reaction.emoji) == "🟧":
+                f = open("lvl.txt","r")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                if self_coin >= 500:
+                    self_coin -= 500
+                    tag = 2
+                    await reaction.message.edit(f"{user.mention}님이 '!운!'칭호를 구매했어요!")
+                else:
+                    print("nope1")
+                    await reaction.message.edit("돈이 부족해요;;")
+                lvl_exp1 = lvl**4
+                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+                await reaction.message.edit(embed = embed)
+                f = open("lvl.txt","w")
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
+                f.close()
+            
+            if str(reaction.emoji) == "🟨":
+                f = open("lvl.txt","r")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                if self_coin >= 2000:
+                    self_coin -= 2000
+                    tag = 3
+                    await reaction.message.edit(f"{user.mention}님이 '부자'칭호를 구매했어요!")
+                else:
+                    print("nope1")
+                    await reaction.message.edit("돈이 부족해요;;")
+                lvl_exp1 = lvl**4
+                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+                await reaction.message.edit(embed = embed)
+                f = open("lvl.txt","w")
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
+                f.close()
+            
+            if str(reaction.emoji) == "🛡":
+                f = open("lvl.txt","r")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                if self_coin >= 10000:
+                    self_coin -= 10000
+                    tag = 4
+                    await reaction.message.edit(f"{user.mention}님이 '쉴더'칭호를 구매했어요!")
+                else:
+                    print("nope1")
+                    await reaction.message.edit("돈이 부족해요;;")
+                lvl_exp1 = lvl**4
+                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+                await reaction.message.edit(embed = embed)
+                f = open("lvl.txt","w")
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
+                f.close()
+            
+            if str(reaction.emoji) == "⚔":
+                f = open("lvl.txt","r")
+                lvl_read = f.read()
+                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
+                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
+                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
+                tag = lvl_read.split(str(user.id))[1].split(":")[4]
+                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+                f.close()
+                if self_coin >= 500000:
+                    self_coin -= 500000
+                    tag = 5
+                    await reaction.message.edit(f"{user.mention}님이 '어택커'칭호를 구매했어요!")
+                else:
+                    print("nope1")
+                    await reaction.message.edit("돈이 부족해요;;")
+                lvl_exp1 = lvl**4
+                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
+                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
+                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
+                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
+                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
+                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
+                await reaction.message.edit(embed = embed)
+                f = open("lvl.txt","w")
+                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
+                f.close()
+#게임-------------------------------------------------------------------------------------------------------------------------------------------------------
+#버튼------------------------------------------------------
+class org_but(ui.View):
+    @ui.button(label="버튼",style=ButtonStyle.green)
+    async def sub(self,bt:ui.Button,inter:Integration):
+        await inter.response.send_message("ㅋㅋ",ephemeral = True)
+        self.value = True
+class coin_up(ui.View):
+    @ui.button(label = "돈받기버튼",style = ButtonStyle.green)
+    async def sub(self,button:ui.Button,inter:Integration):
+        try:
+            f = open("lvl.txt","r")
+            lvl_read = f.read()
+            lvl_exp = int(lvl_read.split(str(inter.user.id))[1].split(":")[1])
+            lvl = int(lvl_read.split(str(inter.user.id))[1].split(":")[2])
+            self_coin = int(lvl_read.split(str(inter.user.id))[1].split(":")[3])
+            tag = lvl_read.split(str(inter.user.id))[1].split(":")[4]
+            lvl_txt = lvl_read.replace("\n"+str((str(inter.user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
+            f.close()
+            self_coin += 1
+            f = open("lvl.txt","w")
+            f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,inter.user.id,int(lvl_exp),lvl,self_coin,tag))
+            f.close()
+            await inter.message.edit(f"{inter.user}님이 돈을 벌었어요!",embed = Embed(title="버튼을 클릭해서 돈을 버세요",color=random_color()))
+        except:
+            print("nope")
+            await inter.message.edit("__오류!버튼을 다시만들어주세요__")
+        self.value = True
+    
+class Dropdown(nextcord.ui.Select):
+    def __init__(self):
+        selectOptions = [
+            nextcord.SelectOption(label = "개발자",description = "봇의 개발자를 알려줌"),
+            nextcord.SelectOption(label = "만든날",description = "봇의 만든날을 알려줌"),
+      
+        ]
+        super().__init__(placeholder = "클릭하세요",min_values = 1,max_values = 1,options = selectOptions )
+
+    async def callback(self, interaction : nextcord.Interaction):
+        if self.values[0] == "개발자":
+            return await interaction.message.edit("",embed = Embed(title="개발자",description="__SCRATCHER 5-23♪#9017__",color=random_color())) # ephemeral=True 는 본인만 볼 수 있게
+        if self.values[0] == "만든날":
+            return await interaction.response.edit_message("",embed = Embed(title="만든날",description="2021/9/21 에 만듬",color=random_color()))
+
+  
+      
+
+class DropdownView(nextcord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(Dropdown())
+#버튼------------------------------------------------------
+
+@client.slash_command(description = "한국 유튜버 리스트에 유튜버추가를 요청합니다")
+async def 유튜버추가요청(inter : Interaction , 채널이름 , 짧은설명 , 길은설명 , 채널링크 , 디스코드):
+    name = str(채널이름)
+    name_lower = name.lower()
+    short_description = 짧은설명
+    description = 길은설명
+    img = inter.user.avatar
+    link = 채널링크
+    discord1 = 디스코드
+    json_message = f'''
+```json
+"{name_lower}" : [
+    "name": "{name}",
+    "short_description" : "{short_description}",
+    "description": "{description}",
+    "img": "{img}",
+    "channel": "{link}",
+    "discord": "{discord1}",
+    "heart": "0",
+    "tag": "0",
+    "tags": "0"
+]
+```'''.replace("[","{").replace("]","}")
+    await inter.response.send_message(embed = Embed(title = "전송완료" , description = json_message))
+    await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 추가요청!",description=f"{json_message}\n>>> id : {inter.user.author.id}\nname : {inter.user.author}"))
+
+@client.slash_command(description = "한국 유튜버 리스트에 유튜버정보 변경을 요청합니다")
+async def 유튜버정보변경요청(inter : Interaction , 변경할_유튜버이름 , 변경할정보 , 변경할정보의내용):
+    await inter.response.send_message(embed = Embed(title = "전송완료" , description = f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
+    await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 정보 변경요청!",description=f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
+
+@client.slash_command(description = "한국 유튜버 리스트에 뱃지를 요청합니다")
+async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
+    await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
+    await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
+#--------------------------------------
+
+client.run('ODcxMzQ4NDExMzU2NTQ1MDU3.YQaAcg.4QF-_FDHKk2wmjUMCLlG3XmfHUc')
