@@ -58,6 +58,28 @@ async def change_bot():
     await client.change_presence(activity=Streaming(name=f" | {p}명령어 | ", url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
     await asyncio.sleep(5)
 
+uptime_s = 0
+uptime_m = 0
+uptime_h = 0
+uptime_d = 0
+
+@tasks.loop(seconds=1)
+async def uptime():
+    global uptime_s
+    global uptime_m
+    global uptime_h
+    global uptime_d
+
+    uptime_s +=1
+    if uptime_s >= 60:
+        uptime_s = 0
+        uptime_m +=1
+    if uptime_m >= 60:
+        uptime_m = 0
+        uptime_h += 1
+    if uptime_h >= 24:
+        uptime_h = 0
+        uptime_d += 1
     
 
 @client.event
@@ -68,6 +90,7 @@ async def on_ready():
     print('verson:2.0')
     print('------')
     change_bot.start()
+    uptime.start()
 
 @client.slash_command()
 async def 핑(inter : Interaction):
@@ -168,14 +191,15 @@ async def 로블록스(inter : Interaction , 로블록스이름):
         await inter.response.send_message(embed = embed)
 
 
-@client.slash_command(description = "맴버를 타임아웃(뮤트) 시킴니다.")
-async def 타임아웃(inter : Interaction , 맴버 : Member , 시간 , 사유):
+@client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
+async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
     try:
         if inter.user.guild_permissions.administrator:
             try:
                 int(시간)
-            except:
                 시간 = str(시간)+"초"
+            except:
+                pass
             기간 = str(시간).replace("초","s").replace("분","m").replace("시간","h").replace("일","d").replace("주일","w").replace("주","w").replace("년","y")
             time = humanfriendly.parse_timespan(기간)
             print(time)
@@ -185,8 +209,8 @@ async def 타임아웃(inter : Interaction , 맴버 : Member , 시간 , 사유):
                 time = max_time
                 시간 = "28일"
             
-            await 맴버.edit(timeout=utils.utcnow() + datetime.timedelta(seconds=time))
-            await inter.response.send_message(embed = Embed(title = "타임아웃!",description = f"{맴버.mention} 님은 {시간}동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
+            await 멤버.edit(timeout=utils.utcnow() + datetime.timedelta(seconds=time))
+            await inter.response.send_message(embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}`` 동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
         else:
             await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
     except:
@@ -295,24 +319,6 @@ async def on_message(message):
     global ran
     global pl
     global back
-    if message.content.startswith('5채널'):
-        embed = Embed(title = "채널(도와준사람)",color = 0xff0000)
-        embed.add_field(name="쿠키 유튜브 cookie youtube 🅥  ",value = "[쿠키 유튜브 cookie youtube 🅥](https://www.youtube.com/channel/UC07xngARINB-HLmOe1-c54w)",inline=False)
-        embed.add_field(name="라트Lightning",value = "[라트Lightning](https://www.youtube.com/channel/UCUCLRAy9pflmxgIkWfjvkJQ)",inline=False)
-        embed.add_field(name="SCRATCHER 5-23 ♪",value = "[SCRATCHER 5-23 ♪](https://www.youtube.com/channel/UCj2ikAHEOZNmLnA4ER7_8Fw)",inline=False)
-        embed.add_field(name="마딜MadillTV",value = "[마딜MadillTV](https://www.youtube.com/channel/UCMlwgUQcycyX_sIiab8BNLw)",inline=False)
-        embed.add_field(name="준작가",value = "[준작가](https://www.youtube.com/channel/UCIHxe3D1uTuV63t4NmeYReQ)",inline=False)
-        embed.add_field(name="잡다한 시바견",value = "[잡다한 시바견](https://www.youtube.com/channel/UCT4zLr_r_S7rP8LxOc4uwIw)",inline=False)
-        embed.add_field(name="ROBLOX-뉴비🅥",value = "[ROBLOX-뉴비🅥](https://www.youtube.com/c/ROBLOX%EB%89%B4%EB%B9%84/channels)",inline=False)
-        await message.channel.send(embed = embed)
-
-
-    if message.content.startswith('5도로로'):
-        await message.channel.send('인성문제있음')
-    if message.content.startswith('5번역기'):
-        await message.channel.send('한국봇이라불가능')
-    if message.content.startswith('5마딜'):
-        await message.channel.send('마(른)딜')
 
     if message.content.startswith(f"{p}가위"):
         rsp = randint(1,3)
@@ -355,8 +361,6 @@ async def on_message(message):
             await text.add_reaction('<:good:905078721881452565>')
             await text.add_reaction('<:nooo:905078780421369946>')
 
-    if message.content.startswith(f"{p}5-23"):
-        await message.channel.send("babo babo babo babo babo")
     if message.content.startswith(f"{p}청소"):
         if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.manage_messages:
             num = message.content.split(" ")[1]
@@ -844,9 +848,9 @@ tan 각도
             embed.add_field(name="인증단계",value=(str(message.guild.verification_level)+"ㅤ").replace("none","없음").replace("low","낮음").replace("medium","중간").replace("high","높음").replace("highest","매우 높음") )
             user_ = str(datetime.datetime.utcfromtimestamp(((int(message.guild.id) >> 22) + 1420070400000) / 1000))
             embed.add_field(name="생성일",value=f"{user_[:4]}년{user_[5:7]}월{user_[8:10]}일ㅤ")
-            embed.add_field(name="맴버",value=f"{message.guild.member_count}명ㅤ")
+            embed.add_field(name="멤버",value=f"{message.guild.member_count}명ㅤ")
             embed.add_field(name="봇",value=f"{bot}명ㅤ")
-            embed.add_field(name="순맴버",value=f"{message.guild.member_count-bot}명ㅤ")
+            embed.add_field(name="순멤버",value=f"{message.guild.member_count-bot}명ㅤ")
             a = await message.channel.send(embed = embed)
             all_emoji = ""
             for i in range(len(message.guild.emojis)):
@@ -1151,81 +1155,80 @@ tan 각도
         if msg_send == "yes":
             await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 추가요청!",description=f"{json_message}\n>>> id : {message.author.id}\nname : {message.author}"))
 
+    if message.content.startswith(f"{p}업타임"):
+        await message.channel.send(embed = Embed(title = "업타임!" , description=f"``{uptime_d}일 {uptime_h}시간 {uptime_m}분 {uptime_s}초`` 동안 리셋안하고 작동중"))
+
 #게임-----------------------------------------------------------------------------------------------------------
     if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
         await message.channel.send(embed = Embed(title="개발자 : SCRATCHER 5-23♪#9017",description = "개발자서버 : http://discord.5-23.kro.kr/\n봇초대 : http://discord.5-23bot.kro.kr/"))
 #-----------------------------!명령어----------------------------#
     if message.content.startswith(f"{p}명령어"):
         embed = Embed(title = "명령어",color = 0x00ff00)
-        embed.add_field(name="기본 명령어 - 1",value="""
+        embed.add_field(name="기본 명령어 - 1",value=f"""
 >>> 무야호
-5채널
-5도로로
-5번역기
-5마딜
-5명령어
-5가위
-5바위
-5보
-55-23
-5수학
+{p}명령어
+{p}가위
+{p}바위
+{p}보
+{p}수학
+{p}업타임
 """)
-        embed.add_field(name="기본 명령어 - 2",value="""
->>> 5주사위 /작은수/큰수
-5투표 /이름/항목1/항목2/항목3....
-5랜덤 /항목1/항목2..../항목x
-5도배 /글/개수
-5정보
-5타이머 초
-5현재
-5유튜브 채널이름
-5서버정보
-5활성화여부
-5이모지 커스텀이모지
-5봇 @봇 멘션
-5요청 [한국 유튜버리스트](https://site-main.scratcher5-23.repl.co) 에 유튜버 추가를 요청함
+        embed.add_field(name="기본 명령어 - 2",value=f"""
+>>> {p}주사위 /작은수/큰수
+{p}투표 /이름/항목1/항목2/항목3....
+{p}랜덤 /항목1/항목2..../항목x
+{p}도배 /글/개수
+{p}정보
+{p}타이머 초
+{p}현재
+{p}유튜브 채널이름
+{p}서버정보
+{p}활성화여부
+{p}이모지 커스텀이모지
+{p}봇 @봇 멘션
+{p}요청 [한국 유튜버리스트](https://site-main.scratcher5-23.repl.co) 에 유튜버 추가를 요청함
 """)
-        embed.add_field(name="게임 명령어",value="""
->>> 5벌기
-5도박 숫자
-5레벨 (@멘션)
-5상점
-5입금 @멘션
-5참가
+        embed.add_field(name="게임 명령어",value=f"""
+>>> {p}벌기
+{p}도박 숫자
+{p}레벨 (@멘션)
+{p}상점
+{p}입금 @멘션
+{p}참가
 """)
-        embed.add_field(name="권한필요 명령어",value="""
->>> 5공지 /이름/글 ```어드민 필요```
-5슬로우 초 ```어드민필요```
-5링크 비활성화 #링크삭제 비활성화 ```어드민 필요```
-5링크 활성화 #링크삭제 활성화 ```어드민 필요```
-5킥 @멘션 사유 ```유저킥 필요```
-5밴 @멘션 사유 ```유저밴 필요```
-5추가 @멘션 @역할 ```어드민```
-5제거 @멘션 @역할 ```어드민```
+        embed.add_field(name="권한필요 명령어",value=f"""
+>>> {p}공지 /이름/글 ```어드민 필요```
+{p}슬로우 초 ```어드민필요```
+{p}링크 비활성화 #링크삭제 비활성화 ```어드민 필요```
+{p}링크 활성화 #링크삭제 활성화 ```어드민 필요```
+{p}킥 @멘션 사유 ```유저킥 필요```
+{p}밴 @멘션 사유 ```유저밴 필요```
+{p}추가 @멘션 @역할 ```어드민```
+{p}제거 @멘션 @역할 ```어드민```
 """)
-        embed.add_field(name="삭제 명령어",value="""
->>> 5청소 숫자 ```메세지관리 필요```
-5clear 숫자 ```메세지관리 필요```
+        embed.add_field(name="삭제 명령어",value=f"""
+>>> {p}청소 숫자 ```메세지관리 필요```
+{p}clear 숫자 ```메세지관리 필요```
 """)
-        embed.add_field(name="음악 명령어",value="""
->>> 5들어와
-5나가
-5재생 url
-5정지
+        embed.add_field(name="음악 명령어",value=f"""
+>>> {p}들어와
+{p}나가
+{p}재생 url
+{p}정지
 """)
-        embed.add_field(name="버튼 명령어",value="""
->>> 5버튼
-5계산기
+        embed.add_field(name="버튼 명령어",value=f"""
+>>> {p}버튼
+{p}계산기
 """)
-        embed.add_field(name="셀렉트 명령어",value="""
->>> 5봇정보
+        embed.add_field(name="셀렉트 명령어",value=f"""
+>>> {p}봇정보
 """)
-        embed.add_field(name="AI",value="""
+        embed.add_field(name="AI",value=f"""
 >>> //단어 ```핑퐁 빌더 지원```
 """)
-        embed.add_field(name="개발자 명령어",value="""
->>> 5답변 @멘션/내용
-5답장 @멘션/내용
+        embed.add_field(name="개발자 명령어",value=f"""
+>>> {p}답변 @멘션/내용
+{p}답장 @멘션/내용
 """)
         embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
         await message.channel.send(embed = embed)
@@ -1667,7 +1670,6 @@ async def 유튜버정보변경요청(inter : Interaction , 변경할_유튜버�
 async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
-
-   #--------------------------------------
+#--------------------------------------
 token = os.environ['BOT_TOKEN']
 client.run(token)
