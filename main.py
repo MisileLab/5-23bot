@@ -1659,7 +1659,7 @@ async def 유튜버추가요청(inter : Interaction , 채널이름 , 짧은설�
     discord1 = 디스코드
     json_message = f'''
 ```json
-"{name_lower}" : [
+"{name_lower}": [
     "name": "{name}",
     "short_description" : "{short_description}",
     "description": "{description}",
