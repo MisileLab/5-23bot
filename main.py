@@ -216,6 +216,19 @@ async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
     except:
         await inter.response.send_message(embed = Embed(title="봇에게 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
 
+@client.slash_command(description="개발자만 사용가능" , guild_ids = [899900037700669481])
+async def 메세지보내기(inter : Interaction , id , message):
+    if int(inter.channel_id) == 923831470219493376:
+        member = utils.get(client.get_all_members(),id = int(id))
+        try:
+            await member.send(embed = Embed(title = "개발자에게서 메세지가 왔어요!" , description= f">>> {message}" , color = random_color() ))
+            await inter.response.send_message(f"```ini\n[메세지보내기 성공] {message}```")
+        except:
+            await inter.send("```메세지를 보네지 못했어요!```")
+    else:
+        await inter.response.send_message(">>> 개발자만 사용할수 있어요!" , ephemeral = True)
+    
+
 @client.event
 async def on_message(message):
     #준비시작------------------------------------------------
@@ -502,7 +515,7 @@ tan 각도
             text3 = message.content[3:]
             await message.channel.send(text3)
 
-    if message.content.startswith('5답변') or message.content.startswith('5답장'):
+    if message.content.startswith(f'{p}답변') or message.content.startswith(f'{p}답장'):
         if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five:
             msg = message.content[4:].split("/")[1]
             await message.channel.send(f"```답변/답장 을 성공하였습니다\n내용:{msg}```")
@@ -999,7 +1012,7 @@ tan 각도
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
-            await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
+            await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}.",color = 0xff0000))
             await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
             await user.kick()
         else:
@@ -1010,7 +1023,7 @@ tan 각도
             msg = (message.content[25:])
             await message.delete()
             await user.send(embed = Embed(title=f"{message.author}님이 당신을 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
-            await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
+            await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}.",color = 0xff0000))
             await user.ban()
         else:
             await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
@@ -1235,21 +1248,21 @@ tan 각도
 
 #--------------------------------------음악--------------------------------------#
 
-    if message.content.startswith("5상태"):
+    if message.content.startswith(f"{p}상태"):
         await message.channel.send("""🟢│음악명령어 사용가능""")
 
-    if message.content.startswith("5들어와"):
+    if message.content.startswith(f"{p}들어와"):
         await message.author.voice.channel.connect()
         await message.delete()
 
-    if message.content.startswith("5나가"):
+    if message.content.startswith(f"{p}나가"):
         for vc in client.voice_clients:
             if vc.guild == message.guild:
                 voice = vc
         await voice.disconnect()
         await message.delete()
 
-    if message.content.startswith("5재생"):
+    if message.content.startswith(f"{p}재생"):
         noo = 0
         embed = Embed(title = f"{message.author.name}님이요청하신 곡을 준비중 입니다", color = 0x00ff00)
         emb = await message.channel.send(embed = embed)
@@ -1286,7 +1299,7 @@ tan 각도
                 voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
 
     
-    if message.content.startswith("5정지"):
+    if message.content.startswith(f"{p}정지"):
         for vc in client.voice_clients:
           if vc.guild == message.guild:
               voice = vc
@@ -1358,7 +1371,7 @@ tan 각도
         else:
             await message.reply("권한이 없어요")
         
-    if message.content.startswith("!활성화여부"):
+    if message.content.startswith(f"{p}활성화여부"):
         msg = await message.channel.send(embed = Embed(title="활성화여부"))
         f1 = open("svr.txt","r")
         if str(message.guild.id) in str(f1):
@@ -1671,5 +1684,6 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
+
 token = os.environ['BOT_TOKEN']
 client.run(token)
