@@ -6,6 +6,7 @@ datetime
 beautifulsoup4
 requests
 ffmpeg-python
+ffmpeg
 PingPongTool
 humanfriendly
 PyNaCl
