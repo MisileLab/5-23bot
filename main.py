@@ -1292,14 +1292,15 @@ tan 각도
                 URL = info['formats'][0]['url']
                 name = info['title']
             voice = client.voice_clients[0]
-            embed = Embed(title = f"{message.author.name}님이 {name}을 재생합니다" , color = 0x00ff00 , description = f"[유튜브영상링크]({url})")
-            embed.set_thumbnail(url = img)
-            a = await emb.edit(embed = embed)
-            await a.add_reaction("<:vv:905014667632594994>")
+            if not vc.is_playing():
+                embed = Embed(title = f"{message.author.name}님이 {name}을 재생합니다" , color = 0x00ff00 , description = f"[유튜브영상링크]({url})")
+                embed.set_thumbnail(url = img)
+                a = await emb.edit(embed = embed)
+                await a.add_reaction("<:vv:905014667632594994>")
+            else:
+                await message.channel.send(embed = Embed(title = "이미 다른곡이 재생중 입니다" , description = "곡을 멈추고 싶다면 ``5정지``를 사용하세요"))
             if not vc.is_playing():
                 voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-            else:
-                await message.channel.send(embed = Embed(title=""))
 
     
     if message.content.startswith(f"{p}정지"):
