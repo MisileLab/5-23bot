@@ -28,7 +28,7 @@ import requests
 from PingPongTool import PingPong
 import humanfriendly
 
-yt_api_key = "AIzaSyCiFbm7yQ9kjT1UxlKEMYLg_NbzCLLtr-s"
+yt_api_key = "AIzaSyA21HLcAEjVooEfUQNLaAOf5jXdR_1r7UY"
 yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
 
 #==================================================================
