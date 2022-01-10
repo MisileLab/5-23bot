@@ -10,3 +10,5 @@ PingPongTool
 humanfriendly
 PyNaCl
 nextcord[voice]
+git+https://github.com/Rapptz/nextcord.py
+ffmpeg
