@@ -211,7 +211,7 @@ async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
                 시간 = "28일"
             
             await 멤버.edit(timeout=utils.utcnow() + datetime.timedelta(seconds=time))
-            await inter.response.send_message(embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}`` 동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
+            await inter.response.send_message(embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}``동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
         else:
             await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
     except:
@@ -1298,6 +1298,8 @@ tan 각도
             await a.add_reaction("<:vv:905014667632594994>")
             if not vc.is_playing():
                 voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+            else:
+                await message.channel.send(embed = Embed(title=""))
 
     
     if message.content.startswith(f"{p}정지"):
@@ -1660,7 +1662,7 @@ async def 유튜버추가요청(inter : Interaction , 채널이름 , 짧은설�
     discord1 = 디스코드
     json_message = f'''
 ```json
-"{name_lower}": [
+"{name_lower}" : [
     "name": "{name}",
     "short_description" : "{short_description}",
     "description": "{description}",
