@@ -1297,7 +1297,7 @@ tan 각도
             else:
                 await message.channel.send(embed = Embed(title = "이미 다른곡이 재생중 입니다" , description = "곡을 멈추고 싶다면 ``5정지``를 사용하세요"))
             if not vc.is_playing():
-                voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS),after = lambda e:FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+                voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
 
     
     if message.content.startswith(f"{p}정지"):
