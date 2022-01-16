@@ -5,7 +5,7 @@ import nextcord
 from nextcord import activity
 from nextcord import embeds
 import asyncio
- 
+import json
 
 from nextcord.embeds import Embed
 from nextcord.ext.commands.core import check
