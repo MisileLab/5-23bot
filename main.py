@@ -234,6 +234,15 @@ async def 메세지보내기(inter : Interaction , id , message):
 
 @client.event
 async def on_message(message):
+    guildId = message.guild.id
+    try:
+        with open("NoText.json" , "r+") as f:
+            txt = json.load(f)[str(guildId)]
+        if str(message.content) in txt:
+            await message.delete()
+            await message.channel.send(embed = Embed(title = f"__{message.author}__은/는 이서버에서 금지된단어를 사용하셨습니다" , description = f"{message.author.mention}다음부터 조심해주세요!" , color = random_color() ))
+    except:
+        pass
     #준비시작------------------------------------------------
     try:
         if str(message.channel.type) == "private":
@@ -1249,6 +1258,38 @@ tan 각도
         embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
         await message.channel.send(embed = embed)
 
+    if message.content.startswith(f"{p}금지단어 "):
+        if message.author.guild_permissions.manage_messages:
+            guildId = message.guild.id
+            try:
+                with open("NoText.json" , "r+") as f:
+                  text = json.load(f)
+            except:
+                text = {}
+
+            try:
+                text[str(guildId)]; NoneText = 0;
+            except:
+                NoneText = 1;
+
+            with open("NoText.json" , "w+") as f:
+
+                msg = str(message.content).replace("5금지단어 ","") 
+
+                if NoneText == 1: 
+                    text[str(guildId)] = [str(msg)]
+                    json.dump(text , f , indent = 4)
+                    await message.channel.send(embed = Embed(title = "추가 완료!",description = f"```ini\n{text[str(guildId)]}\n```", color = 0xff0000))
+                else:
+                    if msg in text[str(guildId)]:
+                        json.dump(text , f , indent = 4)
+                        await message.channel.send(embed = Embed(title = "...",description = f"```ini\n{text[str(guildId)]}\n```" , color = 0xff0000))
+                        pass
+                    else:
+                        text[str(guildId)].append(str(msg))
+                        json.dump(text , f , indent = 4)
+                        await message.channel.send(embed = Embed(title = "추가 완료!",description = f"```ini\n{text[str(guildId)]}\n```", color = random_color() ))
+                        
 #--------------------------------------음악--------------------------------------#
 
     if message.content.startswith(f"{p}상태"):
