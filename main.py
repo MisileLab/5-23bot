@@ -194,6 +194,11 @@ async def 로블록스(inter : Interaction , 로블록스이름):
         await inter.response.send_message(embed = embed)
 
 
+
+async def 음(inter : Interaction):
+    SlashOption(choices=["a","b"])
+    await inter.response.send_message("a")
+
 @client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
 async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
     try:
@@ -236,11 +241,16 @@ async def 메세지보내기(inter : Interaction , id , message):
 async def on_message(message):
     guildId = message.guild.id
     try:
-        with open("NoText.json" , "r+") as f:
-            txt = json.load(f)[str(guildId)]
-        if str(message.content) in txt:
-            await message.delete()
-            await message.channel.send(embed = Embed(title = f"__{message.author}__은/는 이서버에서 금지된단어를 사용하셨습니다" , description = f"{message.author.mention}다음부터 조심해주세요!" , color = random_color() ))
+        if ((message.author.guild_permissions.manage_messages) and (f"{p}금지단어 " in str(message.content))) == False:
+            msg = str(message.content).replace("0","").replace("1","").replace("2","").replace("3","").replace("4","").replace("5","").replace("6","").replace("7","").replace("8","").replace("9","")
+            msg = str(message.content).replace("`","").replace("~","").replace("!","").replace("@","").replace("#","").replace("$","").replace("%","").replace("^","").replace("&","").replace("*","").replace("(","").replace(")","").replace("-","").replace("_","").replace("","").replace("-","+")
+            msg = str(message.content).replace("\\","").replace("|","").replace("<","").replace(",","").replace(">","").replace(".","").replace("/","").replace("?","").replace(";","").replace(":","").replace("'","").replace('"',"")
+            with open("NoText.json" , "r+") as f:
+                txt = json.load(f)[str(guildId)]
+            for i in txt:
+                if(i in msg) or (i in msg.replace(" ","")):
+                    await message.delete()
+                    await message.channel.send(embed = Embed(title = f"__{message.author}__은/는 이서버에서 금지된단어를 사용하셨습니다" , description = f"{message.author.mention}다음부터 조심해주세요!" , color = random_color() ))
     except:
         pass
     #준비시작------------------------------------------------
@@ -330,19 +340,7 @@ async def on_message(message):
             except:
                 pass
     #준비끝------------------------------------------------
-    global p1
-    global p2
-    global p3
-    global p4
-    global p5
-    global p6
-    global p7
-    global p8
-    global p9
-    global p10
-    global ch2
     global ran
-    global pl
     global back
 
     if message.content.startswith(f"{p}가위"):
@@ -1257,6 +1255,8 @@ tan 각도
 """)
         embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
         await message.channel.send(embed = embed)
+    
+#-------------------------------------금지단어-------------------------------------#
 
     if message.content.startswith(f"{p}금지단어 "):
         if message.author.guild_permissions.manage_messages:
@@ -1274,22 +1274,25 @@ tan 각도
 
             with open("NoText.json" , "w+") as f:
 
-                msg = str(message.content).replace("5금지단어 ","") 
+                msg = str(message.content).replace(f"{p}금지단어 ","") 
 
                 if NoneText == 1: 
                     text[str(guildId)] = [str(msg)]
                     json.dump(text , f , indent = 4)
-                    await message.channel.send(embed = Embed(title = "추가 완료!",description = f"```ini\n{text[str(guildId)]}\n```", color = 0xff0000))
+                    a = await message.channel.send(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = 0xff0000))
                 else:
                     if msg in text[str(guildId)]:
+                        text[str(guildId)].remove(msg)
                         json.dump(text , f , indent = 4)
-                        await message.channel.send(embed = Embed(title = "...",description = f"```ini\n{text[str(guildId)]}\n```" , color = 0xff0000))
+                        a = await message.channel.send(embed = Embed(title = "제거 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요" , color = 0xff0000))
                         pass
                     else:
                         text[str(guildId)].append(str(msg))
                         json.dump(text , f , indent = 4)
-                        await message.channel.send(embed = Embed(title = "추가 완료!",description = f"```ini\n{text[str(guildId)]}\n```", color = random_color() ))
-                        
+                        a = await message.channel.send(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = random_color() ))
+                await a.add_reaction("👁")
+#-------------------------------------금지단어-------------------------------------#
+
 #--------------------------------------음악--------------------------------------#
 
     if message.content.startswith(f"{p}상태"):
@@ -1431,10 +1434,35 @@ tan 각도
     
 #----------------리액션-----------------#
 @client.event
+async def on_reaction_remove(reaction, user):
+    message = reaction.message
+    if str(reaction.emoji) == "👁":
+        if user.guild_permissions.manage_messages:
+            if message.author.id == five:
+                if str(message.embeds[0].title) == "추가 완료!" or str(message.embeds[0].title) == "제거 완료!":
+                    embed = Embed(title = message.embeds[0].title , color = message.embeds[0].color , description=f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요")
+                    await message.edit(embed = embed)
+@client.event
 async def on_reaction_add(reaction, user):
     global five
     message = reaction.message
+
     if user.bot == False:
+
+        if str(reaction.emoji) == "👁":
+            if user.guild_permissions.manage_messages:
+                if message.author.id == five:
+                    print(message.embeds[0].title)
+                    if str(message.embeds[0].title) == "추가 완료!" or str(message.embeds[0].title) == "제거 완료!":
+                        with open("NoText.json","r+") as f:
+                            text = json.load(f)[str(message.guild.id)]
+                        embed = Embed(title = message.embeds[0].title , color = message.embeds[0].color , description=f"```ini\n{text}\n```")
+                        await message.edit(embed = embed)
+            else:
+                reaction.remove(user)
+                await user.send(embed = Embed(title = "오류!" , description = "당신은 ``메세지관리자``가 아닙니다." , color = 0xff0000))
+
+
         if str(reaction.emoji) == "<:xx:905014703577772063>":
             if user.guild_permissions.manage_messages:
                 if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
