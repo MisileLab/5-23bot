@@ -194,10 +194,40 @@ async def 로블록스(inter : Interaction , 로블록스이름):
         await inter.response.send_message(embed = embed)
 
 
+@client.slash_command(description="단어를 금지하거나 금지해제함")
+async def 금지단어(inter : Interaction , 단어):
+    if inter.user.guild_permissions.manage_messages:
+        guildId = inter.guild.id
+        try:
+            with open("NoText.json" , "r+") as f:
+                text = json.load(f)
+        except:
+            text = {}
 
-async def 음(inter : Interaction):
-    SlashOption(choices=["a","b"])
-    await inter.response.send_message("a")
+        try:
+            text[str(guildId)]; NoneText = 0;
+        except:
+            NoneText = 1;
+
+        with open("NoText.json" , "w+") as f:
+
+            msg = 단어
+
+            if NoneText == 1: 
+                text[str(guildId)] = [str(msg)]
+                json.dump(text , f , indent = 4)
+                a = await inter.response.send_message(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = 0xff0000) , ephemeral = True)
+            else:
+                if msg in text[str(guildId)]:
+                    text[str(guildId)].remove(msg)
+                    json.dump(text , f , indent = 4)
+                    a = await inter.response.send_message(embed = Embed(title = "제거 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요" , color = 0xff0000) , ephemeral = True)
+                    pass
+                else:
+                    text[str(guildId)].append(str(msg))
+                    json.dump(text , f , indent = 4)
+                    a = await inter.response.send_message(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = random_color() ) , ephemeral = True)
+            await a.add_reaction("👁")
 
 @client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
 async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
@@ -1290,6 +1320,7 @@ tan 각도
                         text[str(guildId)].append(str(msg))
                         json.dump(text , f , indent = 4)
                         a = await message.channel.send(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = random_color() ))
+                await message.delete()
                 await a.add_reaction("👁")
 #-------------------------------------금지단어-------------------------------------#
 
