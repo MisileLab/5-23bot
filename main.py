@@ -233,7 +233,7 @@ async def 금지단어(inter : Interaction , 단어):
 @client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
 async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
     try:
-        if inter.user.guild_permissions.administrator:
+        if inter.user.guild_permissions.administrator or inter.user.id == scratcher:
             try:
                 int(시간)
                 시간 = str(시간)+"초"
