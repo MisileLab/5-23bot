@@ -270,10 +270,10 @@ async def 메세지보내기(inter : Interaction , id , message):
 
 @client.event
 async def on_message(message):
-    if message.channel.guild.id == 931014603599650876:
-        if (message.author.id == 782841803530567680):
-            await message.author.add_roles
-    guildId = message.guild.id
+    try:
+        guildId = message.guild.id
+    except:
+        pass
     try:
         if ((message.author.guild_permissions.manage_messages) and (f"{p}금지단어 " in str(message.content))) == False:
             msg = str(message.content).replace("0","").replace("1","").replace("2","").replace("3","").replace("4","").replace("5","").replace("6","").replace("7","").replace("8","").replace("9","")
