@@ -1083,7 +1083,7 @@ tan 각도
 
             embedMessage = await message.channel.send(embed = Embed(title = f"**{message.author}**" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
             def check(m):
-                return (m.author.id == message.author.id) and (m.channel.id == message.channel.id)
+                return (m.channel.id == message.channel.id)
             
             async def rmx(embedMessage):
                 msg = await client.wait_for("message" , check=check)
