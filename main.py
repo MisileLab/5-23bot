@@ -1355,8 +1355,8 @@ async def on_reaction_add(reaction, user):
                 try:
                     if str(reaction.message.channel.type) == "private":
                         embed = Embed(title = f"{user}님이 문의를 하였습니다",description = f"내용 : {reaction.message.content}\n 멘션:{user.mention}\nid:{user.id}",timestamp=reaction.message.created_at)
-                        img = str(message.attachments[0])
                         try: 
+                            img = str(message.attachments[0])
                             embed.set_image(url = img)
                         except: 
                             pass
