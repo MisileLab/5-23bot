@@ -1087,8 +1087,8 @@ tan 각도
         
         async def rmx(embedMessage):
             msg = await client.wait_for("message" , check=check)
-            re = await msg.reply(">>> 확인중.")
             if (msg != "끝말잇기를 종료하셨습니다.") and (msg.author.bot == False):
+                re = await msg.reply(">>> 확인중.")
                 key = "43F2B9D4EC883263F878DC81295B8E60"
                 text = msg.content
                 if text[0] == embedMessage.embeds[0].description.split("**")[1][len(embedMessage.embeds[0].description.split("**")[1])-1]:
