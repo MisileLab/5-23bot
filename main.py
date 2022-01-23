@@ -1065,6 +1065,43 @@ tan 각도
     if message.content.startswith(f"{p}업타임"):
         await message.channel.send(embed = Embed(title = "업타임!" , description=f"``{uptime_d}일 {uptime_h}시간 {uptime_m}분 {uptime_s}초`` 동안 리셋안하고 작동중"))
 
+    if message.content.startswith(f"{p}끝말잇기"):
+            key = "43F2B9D4EC883263F878DC81295B8E60"
+            
+            with open("randomText.json","r+") as f:
+                text = json.load(f)
+                text = text["1"][randint(0,len(text["1"])-1)]
+
+            a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
+
+            word = a["channel"]["item"][0]["word"]
+            description = a["channel"]["item"][0]["sense"]["definition"]
+            link = a["channel"]["item"][0]["sense"]["link"]
+
+            embedMessage = await message.channel.send(embed = Embed(title = f"" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
+            def check(m):
+                return (m.author.id == message.author.id) and (m.channel.id == message.channel.id)
+            
+            async def rmx(embedMessage):
+                msg = await client.wait_for("message" , check=check)
+                if (msg != "끝말잇기를 종료하셨습니다.") and (msg.author.bot == False):
+                    try:
+                        key = "43F2B9D4EC883263F878DC81295B8E60"
+                        text = msg.content
+                        if text[0] == embedMessage.embeds[0].description.split("**")[1][len(embedMessage.embeds[0].description.split("**")[1])-1]:
+                            a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
+
+                            word = a["channel"]["item"][0]["word"]
+                            description = a["channel"]["item"][0]["sense"]["definition"]
+                            link = a["channel"]["item"][0]["sense"]["link"]
+                            embedMessage2 = await message.channel.send(embed = Embed(title = f"" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
+                            await embedMessage.delete()
+                            await rmx(embedMessage2)
+                    except:
+                        print(0)
+                        await rmx(embedMessage)
+            await rmx(embedMessage)
+
 #게임-----------------------------------------------------------------------------------------------------------
     if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
         await message.channel.send(embed = Embed(title="개발자 : SCRATCHER 5-23♪#9017",description = "개발자서버 : http://discord.5-23.kro.kr/\n봇초대 : http://discord.5-23bot.kro.kr/"))
@@ -1102,6 +1139,7 @@ tan 각도
 {p}상점
 {p}입금 @멘션
 {p}참가
+{p}끝말잇기
 """)
         embed.add_field(name="권한필요 명령어",value=f"""
 >>> {p}공지 /이름/글 ```어드민 필요```
@@ -1326,6 +1364,12 @@ class org_but(ui.View):
     async def sub(self,bt:ui.Button,inter:Integration):
         await inter.response.send_message("ㅋㅋ",ephemeral = True)
         self.value = True
+
+class rmx_button(ui.View):
+    @ui.button(label = "끝내기" , style = ButtonStyle.red)
+    async def rmx(self , button : ui.Button , inter : Integration):
+        await inter.message.delete()
+        await inter.message.channel.send("끝말잇기를 종료하셨습니다.")
     
 class Dropdown(nextcord.ui.Select):
     def __init__(self):
