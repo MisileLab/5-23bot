@@ -270,23 +270,6 @@ async def 메세지보내기(inter : Interaction , id , message):
 
 @client.event
 async def on_message(message):
-    try:
-        guildId = message.guild.id
-    except:
-        pass
-    try:
-        if ((message.author.guild_permissions.manage_messages) and (f"{p}금지단어 " in str(message.content))) == False:
-            msg = str(message.content).replace("0","").replace("1","").replace("2","").replace("3","").replace("4","").replace("5","").replace("6","").replace("7","").replace("8","").replace("9","")
-            msg = str(message.content).replace("`","").replace("~","").replace("!","").replace("@","").replace("#","").replace("$","").replace("%","").replace("^","").replace("&","").replace("*","").replace("(","").replace(")","").replace("-","").replace("_","").replace("","").replace("-","+")
-            msg = str(message.content).replace("\\","").replace("|","").replace("<","").replace(",","").replace(">","").replace(".","").replace("/","").replace("?","").replace(";","").replace(":","").replace("'","").replace('"',"")
-            with open("NoText.json" , "r+") as f:
-                txt = json.load(f)[str(guildId)]
-            for i in txt:
-                if(i in msg) or (i in msg.replace(" ","")):
-                    await message.delete()
-                    await message.channel.send(embed = Embed(title = f"__{message.author}__은/는 이서버에서 금지된단어를 사용하셨습니다" , description = f"{message.author.mention}다음부터 조심해주세요!" , color = random_color() ))
-    except:
-        pass
     #준비시작------------------------------------------------
     try:
         if str(message.channel.type) == "private":
@@ -892,6 +875,7 @@ tan 각도
                         break
         except:
             await message.reply(embed = Embed(title="오류!",description="채널을 찾을수 없습니다",color=0xff0000))
+    
     if message.content.startswith(f"{p}서버정보"):
         try:
             bot = 0
@@ -919,138 +903,6 @@ tan 각도
         except:
             await message.channel.send(embed = Embed(title="봇에 권한이 없어요",color = 0xff0000))
     
-#게임------------------------------------------------------------
-    if message.content.startswith(f"{p}레벨"):
-        try:
-            try:
-                user = message.mentions[0]
-                f = open("lvl.txt","r+")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                embed = Embed(title = f"{user.name}님의 레벨",color = random_color())
-                embed.add_field(name = "경험치", value = "{}/{}".format(lvl**4,lvl_exp+1) )
-                embed.add_field(name = "레벨", value = lvl)
-                embed.add_field(name="코인",value=self_coin)
-                embed.add_field(name="칭호",value=str(tag).replace("0","없음").replace("1","초보모험가").replace("2","!운!").replace("3","부자").replace("4","쉴더").replace("5","어택커") )
-                await message.channel.send(embed = embed)
-            except:
-                embed = Embed(title = f"{message.author.name}님의 레벨",color = random_color())
-                embed.add_field(name = "경험치", value = "{}/{}".format(lvl**4,lvl_exp+1) )
-                embed.add_field(name = "레벨", value = lvl)
-                embed.add_field(name="코인",value=self_coin)
-                embed.add_field(name="칭호",value=str(tag).replace("0","없음").replace("1","초보모험가").replace("2","!운!").replace("3","부자").replace("4","쉴더").replace("5","어택커") )
-                await message.channel.send(embed = embed)
-        except:
-            await message.channel.send(embed = Embed(title = "오류가 났어요 다시 시도해주세요 ``5참가``를 안했다면 ``5참가``를 해주세요",color=0xff0000))
-    
-    if message.content.startswith(f"{p}도박"):
-        try:
-            int_coin = int(message.content.split(" ")[1])
-            if "-" in str(int_coin):
-                int_coin *= -1
-            f = open("lvl.txt","r")
-            lvl_read = f.read()
-            lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
-            lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
-            self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
-            tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
-            lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-            f.close()
-            try:
-                if self_coin >= int_coin:
-                    if randint(1,2) == 2:
-                        if tag == "5":
-                            self_coin += int_coin*3
-                            await message.reply(embed = Embed(title="도박성공!",description="{}=>{}".format(self_coin-int_coin*3,self_coin),color=random_color()))
-                        else:
-                            self_coin += int_coin
-                            await message.reply(embed = Embed(title="도박성공!",description="{}=>{}".format(self_coin-int_coin,self_coin),color=random_color()))
-                    else:
-                        if tag == "4":
-                            if randint(1,2) == 2:
-                                await message.reply(embed = Embed(title="아쉽게 도박에서 실패한줄 알았지만 막아냈어요!",description="{}=>{}".format(self_coin,self_coin),color=random_color()))
-                            else:
-                                self_coin -= int_coin
-                                await message.reply(embed = Embed(title="아쉽게 도박에서 실패했어요ㅠㅠ",description="{}=>{}".format(self_coin+int_coin,self_coin),color=random_color()))
-                        else:
-                            self_coin -= int_coin
-                            await message.reply(embed = Embed(title="아쉽게 도박에서 실패했어요ㅠㅠ",description="{}=>{}".format(self_coin+int_coin,self_coin),color=random_color()))
-                else:
-                    await message.reply(embed = Embed(title="코인이 부족합니다;; '5벌기'를 사용하세요",description=f"코인:{self_coin}",color=0xff0000))
-            except:
-                await message.reply(embed = Embed(title="오류!",description="숫자입력을 해주세요! ``5참가``를 안했다면 ``5참가``를 해주세요",color=0xff0000))
-            f = open("lvl.txt","w")
-            f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp),lvl,self_coin,tag))
-            f.close()
-        except:
-            await message.reply(embed = Embed(title = "오류!",description="숫자를 써주세요! 만약 ``5참가``를 안했다면 ``5참가``를 해주세요",color=0xff0000))
-            return()
-
-    if message.content.startswith(f"{p}상점"):
-        lvl_exp1 = lvl_exp**4
-        embed = Embed(title="상점",description=f"닉네임:{message.author.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-        embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-        embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-        embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-        embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-        embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-        embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-        shop = await message.channel.send(embed = embed)
-        await shop.add_reaction("🔘")
-        await shop.add_reaction("🟥")
-        await shop.add_reaction("🟧")
-        await shop.add_reaction("🟨")
-        await shop.add_reaction("🛡")
-        await shop.add_reaction("⚔")
-
-    if message.content.startswith(f"{p}입금"):
-        try:
-            user = message.mentions[0].id
-            user1 = message.mentions[0]
-            print(str(message.content[26:]).replace(" ",""))
-            int_coin = int(str(message.content[26:]).replace(" ",""))
-            f = open("lvl.txt","r+")
-            lvl_read = f.read()
-            lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
-            lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
-            self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
-            tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
-            lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-            f.close()
-            if str(user) in str(lvl_txt):
-                if self_coin >= int_coin:
-                    if ("-" in str(int_coin)) == False:
-                        f = open("lvl.txt","w")
-                        f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,lvl_exp,lvl,self_coin-int_coin,tag))
-                        f.close()
-                        f = open("lvl.txt","r+")
-                        lvl_read = f.read()
-                        lvl_exp = int(lvl_read.split(str(user))[1].split(":")[1])
-                        lvl = int(lvl_read.split(str(user))[1].split(":")[2])
-                        self_coin = int(lvl_read.split(str(user))[1].split(":")[3])
-                        tag = lvl_read.split(str(user))[1].split(":")[4]
-                        lvl_txt = lvl_read.replace("\n"+str((str(user)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                        f.close()
-                        f = open("lvl.txt","w")
-                        f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user,lvl_exp,lvl,self_coin+int_coin,tag))
-                        f.close()
-                        await message.reply(embed = Embed(title=f"__{user1}__ 님께 {int_coin}코인을 입금완료했습니다!",color = random_color()))
-                        await user1.send(embed = Embed(title=f"{int_coin}입금됨",description=f"{user1.mention}님 __{message.author}__ 님이 당신께 입금을했어요!",color=random_color()))
-                    else:
-                        await message.reply(embed = Embed(title="'-'를사용하면 안되요;;",description=f"코인:{self_coin}",color=0xff0000))
-                else:
-                    await message.reply(embed = Embed(title="코인이 부족해요;;",description=f"코인:{self_coin}",color=0xff0000))
-            else:
-                await message.reply(embed = Embed(title="오류!",description=f"{user1}님의 정보가 없어요",color=0xff0000))
-        except:
-            await message.reply(embed = Embed(title="오류!",description=f"{user1}님의 정보가 없거나 코드에 오류가있어요!",color=0xff0000))
-            f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp),lvl,self_coin,tag))
-            f.close()
     if message.content.startswith(f"{p}킥"):
         if message.author.guild_permissions.kick_members or message.author.id == scratcher:
             user = message.mentions[0]
@@ -1074,9 +926,7 @@ tan 각도
     
     if message.content.startswith(f"{p}버튼"):
         await message.channel.send("안녕",view = org_but())
-    
-    if message.content.startswith(f"{p}벌기"):
-        await message.channel.send(embed = Embed(title="버튼을 클릭해서 돈을 버세요"),view = coin_up())
+
     if message.content.startswith(f"{p}봇정보"):
         await message.channel.send("a",view = DropdownView())
     
@@ -1290,43 +1140,6 @@ tan 각도
         embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
         await message.channel.send(embed = embed)
     
-#-------------------------------------금지단어-------------------------------------#
-
-    if message.content.startswith(f"{p}금지단어 "):
-        if message.author.guild_permissions.manage_messages or message.author.id == scratcher:
-            guildId = message.guild.id
-            try:
-                with open("NoText.json" , "r+") as f:
-                  text = json.load(f)
-            except:
-                text = {}
-
-            try:
-                text[str(guildId)]; NoneText = 0;
-            except:
-                NoneText = 1;
-
-            with open("NoText.json" , "w+") as f:
-
-                msg = str(message.content).replace(f"{p}금지단어 ","") 
-
-                if NoneText == 1: 
-                    text[str(guildId)] = [str(msg)]
-                    json.dump(text , f , indent = 4)
-                    a = await message.channel.send(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = 0xff0000))
-                else:
-                    if msg in text[str(guildId)]:
-                        text[str(guildId)].remove(msg)
-                        json.dump(text , f , indent = 4)
-                        a = await message.channel.send(embed = Embed(title = "제거 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요" , color = 0xff0000))
-                        pass
-                    else:
-                        text[str(guildId)].append(str(msg))
-                        json.dump(text , f , indent = 4)
-                        a = await message.channel.send(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = random_color() ))
-                await message.delete()
-                await a.add_reaction("👁")
-#-------------------------------------금지단어-------------------------------------#
 
 #--------------------------------------음악--------------------------------------#
 
@@ -1484,19 +1297,6 @@ async def on_reaction_add(reaction, user):
 
     if user.bot == False:
 
-        if str(reaction.emoji) == "👁":
-            if user.guild_permissions.manage_messages:
-                if message.author.id == five:
-                    print(message.embeds[0].title)
-                    if str(message.embeds[0].title) == "추가 완료!" or str(message.embeds[0].title) == "제거 완료!":
-                        with open("NoText.json","r+") as f:
-                            text = json.load(f)[str(message.guild.id)]
-                        embed = Embed(title = message.embeds[0].title , color = message.embeds[0].color , description=f"```ini\n{text}\n```")
-                        await message.edit(embed = embed)
-            else:
-                reaction.remove(user)
-                await user.send(embed = Embed(title = "오류!" , description = "당신은 ``메세지관리자``가 아닙니다." , color = 0xff0000))
-
 
         if str(reaction.emoji) == "<:xx:905014703577772063>":
             if user.guild_permissions.manage_messages:
@@ -1520,220 +1320,11 @@ async def on_reaction_add(reaction, user):
                         print(2)
                 except:
                     print(0)
-#게임-------------------------------------------------------------------------------------------------------------------------------------------------------
-        if str(reaction.message.author.id) == str(five):
-            if str(reaction.emoji) == "🔘":
-                f = open("lvl.txt","r")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                if self_coin >= 100:
-                    self_coin -= 100
-                    lvl_exp += 10
-                    await reaction.message.edit(f"{user.mention}님이 '경험치병'아이템을 구매했어요!")
-                else:
-                    print("nope1")
-                    await reaction.message.edit("돈이 부족해요;;")
-                lvl_exp1 = lvl**4
-                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-                await reaction.message.edit(embed = embed)
-                f = open("lvl.txt","w")
-                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
-                f.close()
-                if lvl_exp+1 >= lvl**4:
-                    lvl_exp = int(lvl_read.split(str(message.author.id))[1].split(":")[1])
-                    lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
-                    self_coin = int(lvl_read.split(str(message.author.id))[1].split(":")[3])
-                    tag = lvl_read.split(str(message.author.id))[1].split(":")[4]
-                    lvl_txt = lvl_read.replace("\n"+str((str(message.author.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                    lvl_exp = 0
-                    lvl = int(lvl_read.split(str(message.author.id))[1].split(":")[2])
-                    f.close()
-                    f = open("lvl.txt","w")
-                    f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,message.author.id,int(lvl_exp)+1,lvl+1,self_coin,tag))
-                    f.close()
-
-            if str(reaction.emoji) == "🟥":
-                f = open("lvl.txt","r")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                if self_coin >= 200:
-                    self_coin -= 200
-                    tag = 1
-                    await reaction.message.edit(f"{user.mention}님이 '초보'칭호를 구매했어요!")
-                else:
-                    print("nope1")
-                    await reaction.message.edit("돈이 부족해요;;")
-                lvl_exp1 = lvl**4
-                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-                await reaction.message.edit(embed = embed)
-                f = open("lvl.txt","w")
-                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
-                f.close()
-            
-            if str(reaction.emoji) == "🟧":
-                f = open("lvl.txt","r")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                if self_coin >= 500:
-                    self_coin -= 500
-                    tag = 2
-                    await reaction.message.edit(f"{user.mention}님이 '!운!'칭호를 구매했어요!")
-                else:
-                    print("nope1")
-                    await reaction.message.edit("돈이 부족해요;;")
-                lvl_exp1 = lvl**4
-                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-                await reaction.message.edit(embed = embed)
-                f = open("lvl.txt","w")
-                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
-                f.close()
-            
-            if str(reaction.emoji) == "🟨":
-                f = open("lvl.txt","r")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                if self_coin >= 2000:
-                    self_coin -= 2000
-                    tag = 3
-                    await reaction.message.edit(f"{user.mention}님이 '부자'칭호를 구매했어요!")
-                else:
-                    print("nope1")
-                    await reaction.message.edit("돈이 부족해요;;")
-                lvl_exp1 = lvl**4
-                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-                await reaction.message.edit(embed = embed)
-                f = open("lvl.txt","w")
-                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
-                f.close()
-            
-            if str(reaction.emoji) == "🛡":
-                f = open("lvl.txt","r")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                if self_coin >= 10000:
-                    self_coin -= 10000
-                    tag = 4
-                    await reaction.message.edit(f"{user.mention}님이 '쉴더'칭호를 구매했어요!")
-                else:
-                    print("nope1")
-                    await reaction.message.edit("돈이 부족해요;;")
-                lvl_exp1 = lvl**4
-                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-                await reaction.message.edit(embed = embed)
-                f = open("lvl.txt","w")
-                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
-                f.close()
-            
-            if str(reaction.emoji) == "⚔":
-                f = open("lvl.txt","r")
-                lvl_read = f.read()
-                lvl_exp = int(lvl_read.split(str(user.id))[1].split(":")[1])
-                lvl = int(lvl_read.split(str(user.id))[1].split(":")[2])
-                self_coin = int(lvl_read.split(str(user.id))[1].split(":")[3])
-                tag = lvl_read.split(str(user.id))[1].split(":")[4]
-                lvl_txt = lvl_read.replace("\n"+str((str(user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-                f.close()
-                if self_coin >= 500000:
-                    self_coin -= 500000
-                    tag = 5
-                    await reaction.message.edit(f"{user.mention}님이 '어택커'칭호를 구매했어요!")
-                else:
-                    print("nope1")
-                    await reaction.message.edit("돈이 부족해요;;")
-                lvl_exp1 = lvl**4
-                embed = Embed(title="상점",description=f"닉네임:{user.name} | 코인:{self_coin} | 레벨:{lvl} | exp:{lvl_exp1} / {lvl_exp}",color = random_color())
-                embed.add_field(name="🔘이름:경험치병|가격:100|분류:아이템",value="exp+10")
-                embed.add_field(name="🟥이름:초보모험가|가격:200|분류:칭호",value="채팅을칠때50%의 확률로 exp가 2배로 올라간다")
-                embed.add_field(name="🟧이름:!운!|가격:500|분류:칭호",value="채팅을칠때50%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🟨이름:부자|가격:2000|분류:칭호",value="채팅을칠때100%의 확률로 코인이 1올라간다")
-                embed.add_field(name="🛡이름:쉴더|가격:10000|분류:칭호",value="도박실패를 할때 50%의 확률로 방어해준다")
-                embed.add_field(name="⚔이름:어택커|가격:500000|분류:칭호",value="도박성공을했을때 돈을 4배로준다")
-                await reaction.message.edit(embed = embed)
-                f = open("lvl.txt","w")
-                f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,user.id,int(lvl_exp),lvl,self_coin,tag))
-                f.close()
-#게임-------------------------------------------------------------------------------------------------------------------------------------------------------
 #버튼------------------------------------------------------
 class org_but(ui.View):
     @ui.button(label="버튼",style=ButtonStyle.green)
     async def sub(self,bt:ui.Button,inter:Integration):
         await inter.response.send_message("ㅋㅋ",ephemeral = True)
-        self.value = True
-class coin_up(ui.View):
-    @ui.button(label = "돈받기버튼",style = ButtonStyle.green)
-    async def sub(self,button:ui.Button,inter:Integration):
-        try:
-            f = open("lvl.txt","r")
-            lvl_read = f.read()
-            lvl_exp = int(lvl_read.split(str(inter.user.id))[1].split(":")[1])
-            lvl = int(lvl_read.split(str(inter.user.id))[1].split(":")[2])
-            self_coin = int(lvl_read.split(str(inter.user.id))[1].split(":")[3])
-            tag = lvl_read.split(str(inter.user.id))[1].split(":")[4]
-            lvl_txt = lvl_read.replace("\n"+str((str(inter.user.id)+f":{lvl_exp}:{lvl}:{self_coin}:{tag}:")),"")
-            f.close()
-            self_coin += 1
-            f = open("lvl.txt","w")
-            f.write("{}{}:{}:{}:{}:{}:\n".format(lvl_txt,inter.user.id,int(lvl_exp),lvl,self_coin,tag))
-            f.close()
-            await inter.message.edit(f"{inter.user}님이 돈을 벌었어요!",embed = Embed(title="버튼을 클릭해서 돈을 버세요",color=random_color()))
-        except:
-            print("nope")
-            await inter.message.edit("__오류!버튼을 다시만들어주세요__")
         self.value = True
     
 class Dropdown(nextcord.ui.Select):
