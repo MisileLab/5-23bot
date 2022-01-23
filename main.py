@@ -1067,10 +1067,13 @@ tan 각도
 
     if message.content.startswith(f"{p}끝말잇기"):
             key = "43F2B9D4EC883263F878DC81295B8E60"
-            
-            with open("randomText.json","r+") as f:
-                text = json.load(f)
-                text = text["1"][randint(0,len(text["1"])-1)]
+            try:
+                with open("randomText.json","r+") as f:
+                    text = json.load(f)
+                    text = text["1"][randint(0,len(text["1"])-1)]
+            except:
+                print(0)
+                text = "시작"
 
             a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
 
@@ -1078,7 +1081,7 @@ tan 각도
             description = a["channel"]["item"][0]["sense"]["definition"]
             link = a["channel"]["item"][0]["sense"]["link"]
 
-            embedMessage = await message.channel.send(embed = Embed(title = f"" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
+            embedMessage = await message.channel.send(embed = Embed(title = f"**{message.author}**" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
             def check(m):
                 return (m.author.id == message.author.id) and (m.channel.id == message.channel.id)
             
@@ -1094,7 +1097,7 @@ tan 각도
                             word = a["channel"]["item"][0]["word"]
                             description = a["channel"]["item"][0]["sense"]["definition"]
                             link = a["channel"]["item"][0]["sense"]["link"]
-                            embedMessage2 = await message.channel.send(embed = Embed(title = f"" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
+                            embedMessage2 = await message.channel.send(embed = Embed(title = f"{embedMessage.embeds[0].title}" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
                             await embedMessage.delete()
                             await rmx(embedMessage2)
                     except:
@@ -1368,8 +1371,11 @@ class org_but(ui.View):
 class rmx_button(ui.View):
     @ui.button(label = "끝내기" , style = ButtonStyle.red)
     async def rmx(self , button : ui.Button , inter : Integration):
-        await inter.message.delete()
-        await inter.message.channel.send("끝말잇기를 종료하셨습니다.")
+        if inter.message.embeds[0].title.split("**")[1] == str(inter.user):
+            await inter.message.delete()
+            await inter.message.channel.send("끝말잇기를 종료하셨습니다.")
+        else:
+            await inter.response.send_message(">>> 자신의 것만 지울수 있어요" , ephemeral = True)
     
 class Dropdown(nextcord.ui.Select):
     def __init__(self):
