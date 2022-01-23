@@ -1066,44 +1066,51 @@ tan 각도
         await message.channel.send(embed = Embed(title = "업타임!" , description=f"``{uptime_d}일 {uptime_h}시간 {uptime_m}분 {uptime_s}초`` 동안 리셋안하고 작동중"))
 
     if message.content.startswith(f"{p}끝말잇기"):
-            key = "43F2B9D4EC883263F878DC81295B8E60"
-            try:
-                with open("randomText.json","r+") as f:
-                    text = json.load(f)
-                    text = text["1"][randint(0,len(text["1"])-1)]
-            except:
-                print(0)
-                text = "시작"
 
-            a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
-
-            word = a["channel"]["item"][0]["word"]
-            description = a["channel"]["item"][0]["sense"]["definition"]
-            link = a["channel"]["item"][0]["sense"]["link"]
-
-            embedMessage = await message.channel.send(embed = Embed(title = f"**{message.author}**" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
-            def check(m):
-                return (m.channel.id == message.channel.id)
+        key = "43F2B9D4EC883263F878DC81295B8E60"
+        try:
+            with open("randomText.json","r+") as f:
+                text = json.load(f)
+                text = text["1"][randint(0,len(text["1"])-1)]
+        except:
+            text = "시작"
             
-            async def rmx(embedMessage):
-                msg = await client.wait_for("message" , check=check)
-                if (msg != "끝말잇기를 종료하셨습니다.") and (msg.author.bot == False):
-                    try:
-                        key = "43F2B9D4EC883263F878DC81295B8E60"
-                        text = msg.content
-                        if text[0] == embedMessage.embeds[0].description.split("**")[1][len(embedMessage.embeds[0].description.split("**")[1])-1]:
-                            a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
+        a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
 
-                            word = a["channel"]["item"][0]["word"]
-                            description = a["channel"]["item"][0]["sense"]["definition"]
-                            link = a["channel"]["item"][0]["sense"]["link"]
-                            embedMessage2 = await message.channel.send(embed = Embed(title = f"{embedMessage.embeds[0].title}" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
-                            await embedMessage.delete()
-                            await rmx(embedMessage2)
+        word = a["channel"]["item"][0]["word"]
+        description = a["channel"]["item"][0]["sense"]["definition"]
+        link = a["channel"]["item"][0]["sense"]["link"]
+
+        embedMessage = await message.channel.send(embed = Embed(title = f"**{message.author}**님이 소환함" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
+        def check(m):
+            return (m.channel.id == message.channel.id)
+        
+        async def rmx(embedMessage):
+            msg = await client.wait_for("message" , check=check)
+            re = await msg.reply(">>> 확인중.")
+            if (msg != "끝말잇기를 종료하셨습니다.") and (msg.author.bot == False):
+                key = "43F2B9D4EC883263F878DC81295B8E60"
+                text = msg.content
+                if text[0] == embedMessage.embeds[0].description.split("**")[1][len(embedMessage.embeds[0].description.split("**")[1])-1]:
+
+                    try:
+                        a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
+                        nope = 0
+                        await re.delete()
                     except:
-                        print(0)
+                        nope = 1
+                        await re.edit(">>> 없는단어 입니다")
+
+                    if nope == 0:
+                        word = a["channel"]["item"][0]["word"]
+                        description = a["channel"]["item"][0]["sense"]["definition"]
+                        link = a["channel"]["item"][0]["sense"]["link"]
+                        embedMessage2 = await message.channel.send(embed = Embed(title = f"{embedMessage.embeds[0].title}" , description = f"단어 : **{word}**\n\n뜻 : {description} \n\n[국어사전]({link})" , color = random_color() ) , view = rmx_button())
+                        await embedMessage.delete()
+                        await rmx(embedMessage2)
+                    else:
                         await rmx(embedMessage)
-            await rmx(embedMessage)
+        await rmx(embedMessage)
 
 #게임-----------------------------------------------------------------------------------------------------------
     if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
