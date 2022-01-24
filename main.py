@@ -46,7 +46,7 @@ madle = 849777888231555123
 five = 871348411356545057
 
 INTENTS = Intents.all()
-p = "5"
+p = "!"
 client = commands.Bot(command_prefix = p,intents=INTENTS)
 
 def random_color():
@@ -1088,10 +1088,11 @@ tan 각도
         async def rmx(embedMessage):
             msg = await client.wait_for("message" , check=check)
             if (msg != "끝말잇기를 종료하셨습니다.") and (msg.author.bot == False):
+                re = await msg.reply(">>> 확인중.")
                 key = "43F2B9D4EC883263F878DC81295B8E60"
                 text = msg.content
                 if text[0] == embedMessage.embeds[0].description.split("**")[1][len(embedMessage.embeds[0].description.split("**")[1])-1]:
-                    re = await msg.reply(">>> 확인중.")
+
                     try:
                         a = requests.get(f"https://stdict.korean.go.kr/api/search.do?key={key}&req_type=json&q={text}").json()
                         nope = 0
@@ -1109,6 +1110,8 @@ tan 각도
                         await rmx(embedMessage2)
                     else:
                         await rmx(embedMessage)
+                else:
+                    await rmx(embedMessage)
         await rmx(embedMessage)
 
 #게임-----------------------------------------------------------------------------------------------------------
