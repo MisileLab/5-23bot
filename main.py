@@ -266,7 +266,7 @@ async def 메세지보내기(inter : Interaction , id , message):
             await inter.send("```메세지를 보네지 못했어요!```")
     else:
         await inter.response.send_message(">>> 개발자만 사용할수 있어요!" , ephemeral = True)
-    
+
 
 @client.event
 async def on_message(message):
@@ -402,7 +402,7 @@ async def on_message(message):
             await text.add_reaction('<:nooo:905078780421369946>')
 
     if message.content.startswith(f"{p}청소"):
-        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.manage_messages:
+        if message.author.id == scratcher or message.author.guild_permissions.manage_messages:
             num = message.content.split(" ")[1]
             if num == "모두":
                 num = 9999999999999999999999999999999999999999999999
@@ -418,23 +418,23 @@ async def on_message(message):
                     num = 9999999999999999999999999999999999999999999999
                 await message.delete()
                 await message.channel.purge(limit = num)
-                embed = Embed(title ="메세지{}개가 삭제 되었습니다".format(num),color = 0x000fff)
+                embed = Embed(description ="메세지{}개가 삭제 되었습니다".format(num),color = 0x000fff)
                 embed.set_footer(text = "by - {}".format(message.author.name))
                 await message.channel.send(embed=embed)
         else:
-            embed = Embed(title ="{}님은 5청소를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
+            embed = Embed(description ="{}님은 5청소를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
             await message.channel.send(embed=embed)
     if message.content.startswith(f"{p}clear") or message.content.startswith(f"{p}c"):
-        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.manage_messages:
+        if message.author.id == scratcher or message.author.guild_permissions.manage_messages:
             num = int(message.content.split(" ")[1])
             await message.delete()
             await message.channel.purge(limit = num)
         else:
-            embed = Embed(title ="{}님은 5clear를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
+            embed = Embed(description ="{}님은 5clear를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
             await message.channel.send(embed=embed)
 
     if message.content.startswith(f"{p}공지"):
-        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.administrator:
+        if message.author.id == scratcher or message.author.guild_permissions.manage_messages:
             await message.delete()
             text1 = message.content[4:].split("/")
             embed = Embed(title ="공지:{}".format(text1[1]),color = 0xff0000,description = text1[2])
@@ -492,7 +492,7 @@ tan 각도
         await message.channel.send(embed = embed)
 
     if message.content.startswith(f"{p}도배"):
-        if message.author.id == scratcher or message.author.id == liting or message.author.id == junjacger or message.author.id == cookie or message.author.id ==siba or message.author.id == noob or message.author.id == madle or message.author.id == five or message.author.guild_permissions.administrator:
+        if message.author.id == scratcher or message.author.guild_permissions.administrator:
             text2 = message.content[4:].split("/")
             await message.delete()
             embed = Embed(title = f"{p}도배",description = str(text2[1])*int(text2[2]),color = 0xff00ff)
