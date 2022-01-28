@@ -119,15 +119,6 @@ async def 채널만들기(inter : Interaction , 채널이름):
         await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 채널관리") , ephemeral=True)
         return
 
-# @client.slash_command(description = "채널을 만듬")
-# class option():
-#     def __init__(self):
-#         options = [
-#             SlashOption(name = "a" , description = "ㅁㅁㅁㅁ")
-#         ]
-    # super().__init__(option = options)
-# async def help(self, inter:Interaction):
-#     await inter.response.send_message("self")
 
 @client.slash_command(description = "로블록스 유저의 정보를 가저옵니다")
 async def 로블록스(inter : Interaction , 로블록스이름):
