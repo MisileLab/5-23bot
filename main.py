@@ -119,6 +119,27 @@ async def 채널만들기(inter : Interaction , 채널이름):
         await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 채널관리") , ephemeral=True)
         return
 
+@client.slash_command(description = "임베드를 만들수 있음")
+async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") ,  생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False) , 작은설명 : str = SlashOption(required = False) , 색상 : str = SlashOption(required = False)):
+    try:
+        if "0x" in 색상:color = eval(색상)
+        else:color = eval(f"0x{색상}")
+    except:color = 0x454545
+
+    try:description = 설명.replace("\\n","\n")
+    except:description = "​"
+
+    try:footer = 작은설명
+    except:footer = None
+
+    if 생성일 == "참":timestamp = utils.utcnow()
+    else:timestamp = ""
+        
+
+    embed = Embed(title = 제목.replace("\\n","\n") , description = description ,color = color , timestamp=timestamp)
+    if footer != None:embed.set_footer(text = footer)
+
+    await inter.response.send_message(embed = embed)
 
 @client.slash_command(description = "로블록스 유저의 정보를 가저옵니다")
 async def 로블록스(inter : Interaction , 로블록스이름):
@@ -1448,6 +1469,7 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
+
 
 
 token = os.environ['BOT_TOKEN']
