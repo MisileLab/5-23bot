@@ -935,7 +935,7 @@ tan 각도
             await user.kick()
         else:
             await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
-    if message.content.startswith(f"{p}밴"):
+    if message.content.startswith(f"{p}밴") or message.content.startswith(f"{p}벤"):
         if message.author.guild_permissions.ban_members or message.author.id == scratcher:
             user = message.mentions[0]
             msg = (message.content[25:])
@@ -1414,7 +1414,6 @@ class Dropdown(nextcord.ui.Select):
         selectOptions = [
             nextcord.SelectOption(label = "개발자",description = "봇의 개발자를 알려줌"),
             nextcord.SelectOption(label = "만든날",description = "봇의 만든날을 알려줌"),
-      
         ]
         super().__init__(placeholder = "클릭하세요",min_values = 1,max_values = 1,options = selectOptions )
 
@@ -1457,17 +1456,17 @@ async def 유튜버추가요청(inter : Interaction , 채널이름 , 짧은설�
 ]
 ```'''.replace("[","{").replace("]","}")
     await inter.response.send_message(embed = Embed(title = "전송완료" , description = json_message))
-    await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 추가요청!",description=f"{json_message}\n>>> id : {inter.user.author.id}\nname : {inter.user.author}"))
+    await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 추가요청!",description=f"{json_message}\n>>> id : {inter.user.author.id}\nname : {inter.user.author}"))
 
 @client.slash_command(description = "한국 유튜버 리스트에 유튜버정보 변경을 요청합니다")
 async def 유튜버정보변경요청(inter : Interaction , 변경할_유튜버이름 , 변경할정보 , 변경할정보의내용):
     await inter.response.send_message(embed = Embed(title = "전송완료" , description = f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
-    await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 정보 변경요청!",description=f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
+    await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 정보 변경요청!",description=f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
 
 @client.slash_command(description = "한국 유튜버 리스트에 뱃지를 요청합니다")
 async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
-    await client.get_channel(923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
+    await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
 
 
