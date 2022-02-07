@@ -1425,6 +1425,8 @@ class rmx_button(ui.View):
         else:
             await inter.response.send_message(">>> 자신의 것만 지울수 있어요" , ephemeral = True)
     
+async def DownImg(url):
+    return requests.get(url).content
 
 class DownEmoji(ui.View):
     def __init__(self , url = None , user = None , name = None):
@@ -1437,7 +1439,7 @@ class DownEmoji(ui.View):
         if inter.user == self.user:
             if select.values[0] == "서버에 추가":
                 if inter.user.guild_permissions.manage_emojis_and_stickers:
-                    img = requests.get(self.url).content
+                    img = await DownImg(self.url)
                     await inter.guild.create_custom_emoji(name = self.name , image = img)
                     await inter.response.send_message("추가를 완료하였습니다!" , ephemeral = True)
                 else:
