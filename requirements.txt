@@ -10,4 +10,3 @@ PingPongTool
 humanfriendly
 PyNaCl
 nextcord[voice]
-urllib
