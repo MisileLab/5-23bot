@@ -291,7 +291,7 @@ async def 메세지보내기(inter : Interaction , id , message):
         await inter.response.send_message(">>> 개발자만 사용할수 있어요!" , ephemeral = True)
 
 
-@client.slash_command(description = "랜덤으로 이모지를 보냅니다")
+@client.slash_command(description = "랜덤으로 이모지를 보냅니다.")
 async def 이모지(inter : Interaction):
     def emojiLoop():
         global emojis
@@ -1431,13 +1431,15 @@ class DownEmoji(ui.View):
         self.url = url
         self.user = user
         self.name = name
-        super().__init__(timeout=None)
-    @ui.select(options = [SelectOption(label = "서버에 추가" , emoji = "<:addimage:914342672997683320>" , description="선택한 이모지를 서버에 추가합니다"),SelectOption(label = "메세지 삭제" , emoji = "<:delete:911635798602952704>" , description="선택한 메세지를 삭제합니다"),SelectOption(label = "다른 이모지 보기" , emoji = "<:edit:911643433603596308>" , description="다른 이모지를 찾습니다")])
+        super().__init__(timeout=60)
+    @ui.select(options = [SelectOption(label = "서버에 추가" , emoji = "<:plus:911643433653923880>" , description="선택한 이모지를 서버에 추가합니다"),SelectOption(label = "메세지 삭제" , emoji = "<:delete:911635798602952704>" , description="선택한 메세지를 삭제합니다"),SelectOption(label = "다른 이모지 보기" , emoji = "<:edit:911643433603596308>" , description="다른 이모지를 찾습니다"),SelectOption(label = "끝내기" , emoji = "<:channel_lock:911651516962725979>" , description="이모지  찾기를 끝냅니다")])
     async def Down(self , select : ui.Select , inter : Integration):
         if inter.user == self.user:
             if select.values[0] == "서버에 추가":
                 if inter.user.guild_permissions.manage_emojis_and_stickers:
-                    await inter.response.send_message("현제 개발중인 기능입니다" , ephemeral = True)
+                    img = requests.get(self.url).content
+                    await inter.guild.create_custom_emoji(name = self.name , image = img)
+                    await inter.response.send_message("추가를 완료하였습니다!" , ephemeral = True)
                 else:
                     await inter.response.send_message("이모지와 스티커 관리가 필요합니다" , ephemeral = True)
             if select.values[0] == "메세지 삭제":
@@ -1458,10 +1460,14 @@ class DownEmoji(ui.View):
                 else:
                     emoji = (str(emojis).split(":")[2]).replace(">","")
                     emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
-                
-                color = inter.message.embeds[0].color
-                await inter.message.edit(embed = Embed(title = f"이모지! {emojis}" , color = color).set_image(url =  emoji_link))
+            
+                    color = inter.message.embeds[0].color
+                    await inter.message.edit(embed = Embed(title = f"이모지! {emojis}" , color = color).set_image(url =  emoji_link) , view = self)
 
+            if select.values[0] == "끝내기":
+                select.disabled = True
+
+                await inter.message.edit(embed = inter.message.embeds[0] , view = self)
 
         else:
             await inter.response.send_message("자신의것을 사용하세요" , ephemeral = True)
