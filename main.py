@@ -46,7 +46,7 @@ madle = 849777888231555123
 five = 871348411356545057
 
 INTENTS = Intents.all()
-p = "!"
+p = "5"
 client = commands.Bot(command_prefix = p,intents=INTENTS)
 
 def random_color():
