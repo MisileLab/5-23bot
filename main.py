@@ -1464,7 +1464,7 @@ class DownEmoji(ui.View):
                     emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
             
                     color = inter.message.embeds[0].color
-                    await inter.message.edit(embed = Embed(title = f"이모지! {emojis}" , color = color).set_image(url =  emoji_link) , view = self)
+                    await inter.message.edit(embed = Embed(title = f"이모지! {emojis}" , color = color).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
 
             if select.values[0] == "끝내기":
                 select.disabled = True
