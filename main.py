@@ -46,7 +46,7 @@ madle = 849777888231555123
 five = 871348411356545057
 
 INTENTS = Intents.all()
-p = "5"
+p = "!"
 client = commands.Bot(command_prefix = p,intents=INTENTS)
 
 def random_color():
@@ -95,6 +95,7 @@ async def on_ready():
     print('------')
     change_bot.start()
     uptime.start()
+    # for guild in client.guilds:print(guild.name)
 
 @client.slash_command()
 async def 핑(inter : Interaction):
@@ -289,6 +290,24 @@ async def 메세지보내기(inter : Interaction , id , message):
     else:
         await inter.response.send_message(">>> 개발자만 사용할수 있어요!" , ephemeral = True)
 
+
+@client.slash_command(description = "랜덤으로 이모지를 보냅니다")
+async def 이모지(inter : Interaction):
+    def emojiLoop():
+        global emojis
+        try:
+            guilds = client.guilds[randint(0,len(client.guilds)-1)]
+            emojis = guilds.emojis[randint(0,len(guilds.emojis)-1)]
+        except:
+            emojiLoop()
+    emojiLoop()
+    if "a" in str(str(emojis).split("<")[1].split(":")[0]):
+        emoji = (str(emojis).split(":")[2]).replace(">","")
+        emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.gif?size=160"
+    else:
+        emoji = (str(emojis).split(":")[2]).replace(">","")
+        emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
+    await inter.response.send_message(embed = Embed(title = f"이모지! {emojis}" , color = random_color()).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
 
 @client.event
 async def on_message(message):
@@ -917,7 +936,7 @@ tan 각도
             a = await message.channel.send(embed = embed)
             all_emoji = ""
             for i in range(len(message.guild.emojis)):
-                all_emoji +=" <:{}:{}> ".format(message.guild.emojis[i].name,message.guild.emojis[i].id)
+                all_emoji += str(message.guild.emojis[i])+"ㅤ"
             try:
                 await message.channel.send(embed = Embed(title = "이모지",description=all_emoji,color = ran_col))
             except:
@@ -948,9 +967,6 @@ tan 각도
     
     if message.content.startswith(f"{p}버튼"):
         await message.channel.send("안녕",view = org_but())
-
-    if message.content.startswith(f"{p}봇정보"):
-        await message.channel.send("a",view = DropdownView())
     
     if message.content.startswith(f"{p}추가"):
         if message.author.guild_permissions.administrator or message.author.id == scratcher:
@@ -1409,27 +1425,46 @@ class rmx_button(ui.View):
         else:
             await inter.response.send_message(">>> 자신의 것만 지울수 있어요" , ephemeral = True)
     
-class Dropdown(nextcord.ui.Select):
-    def __init__(self):
-        selectOptions = [
-            nextcord.SelectOption(label = "개발자",description = "봇의 개발자를 알려줌"),
-            nextcord.SelectOption(label = "만든날",description = "봇의 만든날을 알려줌"),
-        ]
-        super().__init__(placeholder = "클릭하세요",min_values = 1,max_values = 1,options = selectOptions )
 
-    async def callback(self, interaction : nextcord.Interaction):
-        if self.values[0] == "개발자":
-            return await interaction.message.edit("",embed = Embed(title="개발자",description="__SCRATCHER 5-23♪#9017__",color=random_color())) # ephemeral=True 는 본인만 볼 수 있게
-        if self.values[0] == "만든날":
-            return await interaction.response.edit_message("",embed = Embed(title="만든날",description="2021/9/21 에 만듬",color=random_color()))
+class DownEmoji(ui.View):
+    def __init__(self , url = None , user = None , name = None):
+        self.url = url
+        self.user = user
+        self.name = name
+        super().__init__(timeout=None)
+    @ui.select(options = [SelectOption(label = "서버에 추가" , emoji = "<:addimage:914342672997683320>" , description="선택한 이모지를 서버에 추가합니다"),SelectOption(label = "메세지 삭제" , emoji = "<:delete:911635798602952704>" , description="선택한 메세지를 삭제합니다"),SelectOption(label = "다른 이모지 보기" , emoji = "<:edit:911643433603596308>" , description="다른 이모지를 찾습니다")])
+    async def Down(self , select : ui.Select , inter : Integration):
+        if inter.user == self.user:
+            if select.values[0] == "서버에 추가":
+                if inter.user.guild_permissions.manage_emojis_and_stickers:
+                    await inter.response.send_message("현제 개발중인 기능입니다" , ephemeral = True)
+                else:
+                    await inter.response.send_message("이모지와 스티커 관리가 필요합니다" , ephemeral = True)
+            if select.values[0] == "메세지 삭제":
+                await inter.message.delete()
+            
+            if select.values[0] == "다른 이모지 보기":
+                def emojiLoop():
+                    global emojis
+                    try:
+                        guilds = client.guilds[randint(0,len(client.guilds)-1)]
+                        emojis = guilds.emojis[randint(0,len(guilds.emojis)-1)]
+                    except:
+                        emojiLoop()
+                emojiLoop()
+                if "a" in str(str(emojis).split("<")[1].split(":")[0]):
+                    emoji = (str(emojis).split(":")[2]).replace(">","")
+                    emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.gif?size=160"
+                else:
+                    emoji = (str(emojis).split(":")[2]).replace(">","")
+                    emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
+                
+                color = inter.message.embeds[0].color
+                await inter.message.edit(embed = Embed(title = f"이모지! {emojis}" , color = color).set_image(url =  emoji_link))
 
-  
-      
 
-class DropdownView(nextcord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.add_item(Dropdown())
+        else:
+            await inter.response.send_message("자신의것을 사용하세요" , ephemeral = True)
 #버튼------------------------------------------------------
 
 @client.slash_command(description = "한국 유튜버 리스트에 유튜버추가를 요청합니다")
