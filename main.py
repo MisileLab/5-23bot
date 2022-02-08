@@ -1152,6 +1152,9 @@ tan 각도
                 else:
                     await rmx(embedMessage)
         await rmx(embedMessage)
+        
+    if message.content.startswith(f"{p}계산기"):
+        await message.reply(embed = Embed(description = "```\nㅤ\n```" , color = random_color()) , view = calculator(message.author))
 
 #게임-----------------------------------------------------------------------------------------------------------
     if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
@@ -1473,6 +1476,186 @@ class DownEmoji(ui.View):
 
         else:
             await inter.response.send_message("자신의것을 사용하세요" , ephemeral = True)
+
+class calculator(ui.View):
+    def __init__(self , user):
+        super().__init__(timeout=None)
+        self.user = user
+
+    @ui.button(label = "1" , style = ButtonStyle.gray)
+    async def one(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "2" , style = ButtonStyle.gray)
+    async def two(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "3" , style = ButtonStyle.gray)
+    async def three(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "×" , style = ButtonStyle.blurple)
+    async def x(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "끝" , style = ButtonStyle.red)
+    async def end(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            await inter.message.delete()
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "4" , style = ButtonStyle.gray)
+    async def four(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "5" , style = ButtonStyle.gray)
+    async def five(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "6" , style = ButtonStyle.gray)
+    async def six(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "÷" , style = ButtonStyle.blurple)
+    async def divide(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "지우기" , style = ButtonStyle.red)
+    async def delete(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))[:len((str(inter.message.embeds[0].description).replace("```","").replace("\n","")))-1]
+            if integer == "":integer = "ㅤ"
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "7" , style = ButtonStyle.gray)
+    async def seven(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "8" , style = ButtonStyle.gray)
+    async def eight(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "9" , style = ButtonStyle.gray)
+    async def nine(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "+" , style = ButtonStyle.blurple)
+    async def plus(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "삭제" , style = ButtonStyle.red)
+    async def deleteALL(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = "ㅤ"
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "0" , style = ButtonStyle.gray)
+    async def zero(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+   
+    @ui.button(label = "00" , style = ButtonStyle.gray)
+    async def DoubleZero(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "." , style = ButtonStyle.gray)
+    async def dot(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "-" , style = ButtonStyle.blurple)
+    async def minus(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "=" , style = ButtonStyle.green)
+    async def equal(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = eval(str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ","").replace("×","*").replace("÷","/").replace("²","**2").replace("𝝅","3.141592"))
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "(" , style = ButtonStyle.gray)
+    async def open(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = ")" , style = ButtonStyle.gray)
+    async def cloose(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "x²" , style = ButtonStyle.gray)
+    async def squared(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+"²"
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+    
+    @ui.button(label = "𝝅" , style = ButtonStyle.gray)
+    async def pie(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = (str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))+str(button.label)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+    @ui.button(label = "√" , style = ButtonStyle.gray)
+    async def root(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            integer = eval(str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))**(1/2)
+            await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
+        else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
 #버튼------------------------------------------------------
 
 @client.slash_command(description = "한국 유튜버 리스트에 유튜버추가를 요청합니다")
@@ -1511,7 +1694,6 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
-
 
 
 token = os.environ['BOT_TOKEN']
