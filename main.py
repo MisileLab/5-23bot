@@ -1798,5 +1798,6 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
 
 
 
+
 token = os.environ['BOT_TOKEN']
 client.run(token)
