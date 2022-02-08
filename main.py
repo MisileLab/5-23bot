@@ -1155,6 +1155,18 @@ tan 각도
         
     if message.content.startswith(f"{p}계산기"):
         await message.reply(embed = Embed(description = "```\nㅤ\n```" , color = random_color()) , view = calculator(message.author))
+    
+    if message.content.startswith(f"{p}그림"):
+        try:size = int(message.content.replace(f"{p}그림",""))
+        except:size = 10
+        MainMap = []
+        for i in range(size):
+            map = []
+            for j in range(size):
+                map.append(randint(0 , 0))
+            MainMap.append(map)
+        MainMap[randint(0,size-1)][randint(0,size-1)] = 2
+        await message.reply(embed = Embed(description = f"```\n{DrowMapLoad(MainMap)}\n```" , color = random_color()) , view = drow(message.author , MainMap))
 
 #게임-----------------------------------------------------------------------------------------------------------
     if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
@@ -1656,6 +1668,93 @@ class calculator(ui.View):
             integer = eval(str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ",""))**(1/2)
             await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
         else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
+
+def DrowFind(x : list):
+    for i in x:
+        for j in i:
+            if j == 2:
+                return [x.index(i),i.index(2)]
+
+def DrowMapLoad(x):
+    String = ""
+    for i in x:
+        for j in i:
+            String += f"{j}"
+
+        String += "\n"
+    MainString = String.replace("0" , "⬜").replace("2" , "🟦")
+    MainString = MainString.replace("1" , "⬛")
+    return MainString
+
+
+
+class drow(ui.View):
+    def __init__(self , user , map):
+        super().__init__(timeout=600)
+        self.size = 10
+        self.MainMap = map
+        self.user = user
+        self.emojiID = 1
+
+    @ui.button(label = "↑" , style = ButtonStyle.blurple)
+    async def w(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            try:
+                self.FindMap = DrowFind(self.MainMap)
+                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
+                self.MainMap[self.FindMap[0]-1][self.FindMap[1]] = 2
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+            except:
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+    
+    @ui.button(label = "↓" , style = ButtonStyle.blurple)
+    async def s(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            try:
+                self.FindMap = DrowFind(self.MainMap)
+                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
+                self.MainMap[self.FindMap[0]+1][self.FindMap[1]] = 2
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+            except:
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+
+    @ui.button(label = "←" , style = ButtonStyle.blurple)
+    async def a(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            try:
+                self.FindMap = DrowFind(self.MainMap)
+                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
+                self.MainMap[self.FindMap[0]][self.FindMap[1]-1] = 2
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+            except:
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+
+    @ui.button(label = "→" , style = ButtonStyle.blurple)
+    async def d(self , button : ui.Button , inter : Integration):
+        if inter.user == self.user:
+            try:
+                self.FindMap = DrowFind(self.MainMap)
+                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
+                self.MainMap[self.FindMap[0]][self.FindMap[1]+1] = 2
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+            except:
+                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+    
+    @ui.button(label="끝내기" , style = ButtonStyle.gray)
+    async def rmx(self , button : ui.Button , inter : Integration):
+        emoji = str(self.emojiID).replace("1","⬛").replace("0","⬜")
+        await inter.message.edit(embed = Embed(description = str(inter.message.embeds[0].description).replace("🟦" , emoji) , color = inter.message.embeds[0].color) , view = None)
+        
+
+    @ui.button(label="⬛" , style = ButtonStyle.danger)
+    async def black(self , button : ui.Button , inter : Integration):
+        self.emojiID = 1
+        await inter.message.edit(embed = inter.message.embeds[0])
+
+    @ui.button(label="⬜" , style = ButtonStyle.danger)
+    async def white(self , button : ui.Button , inter : Integration):
+        self.emojiID = 0
+        await inter.message.edit(embed = inter.message.embeds[0])
 #버튼------------------------------------------------------
 
 @client.slash_command(description = "한국 유튜버 리스트에 유튜버추가를 요청합니다")
