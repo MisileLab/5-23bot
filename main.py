@@ -1166,7 +1166,7 @@ tan 각도
                 map.append(randint(0 , 0))
             MainMap.append(map)
         MainMap[randint(0,size-1)][randint(0,size-1)] = 2
-        await message.reply(embed = Embed(description = f"```\n{DrowMapLoad(MainMap)}\n```" , color = random_color()) , view = drow(message.author , MainMap))
+        await message.reply(embed = Embed(description = f"```\n{await DrowMapLoad(MainMap)}\n```" , color = random_color()) , view = drow(message.author , MainMap))
 
 #게임-----------------------------------------------------------------------------------------------------------
     if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
@@ -1489,6 +1489,8 @@ class DownEmoji(ui.View):
         else:
             await inter.response.send_message("자신의것을 사용하세요" , ephemeral = True)
 
+async def Calculator(x):
+    return eval(str(x).replace("```","").replace("\n","").replace("ㅤ","").replace("×","*").replace("÷","/").replace("²","**2").replace("𝝅","3.141592"))
 class calculator(ui.View):
     def __init__(self , user):
         super().__init__(timeout=None)
@@ -1630,7 +1632,7 @@ class calculator(ui.View):
     @ui.button(label = "=" , style = ButtonStyle.green)
     async def equal(self , button : ui.Button , inter : Integration):
         if inter.user == self.user:
-            integer = eval(str(inter.message.embeds[0].description).replace("```","").replace("\n","").replace("ㅤ","").replace("×","*").replace("÷","/").replace("²","**2").replace("𝝅","3.141592"))
+            integer = await Calculator(inter.message.embeds[0].description)
             await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
         else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
 
@@ -1669,13 +1671,13 @@ class calculator(ui.View):
             await inter.message.edit(embed = Embed(description = f"```\n{integer}\n```" , color = inter.message.embeds[0].color))
         else:await inter.response.send_message(">>> 자신의것을 사용하세요" , ephemeral = True)
 
-def DrowFind(x : list):
+async def DrowFind(x : list):
     for i in x:
         for j in i:
             if j == 2:
                 return [x.index(i),i.index(2)]
 
-def DrowMapLoad(x):
+async def DrowMapLoad(x):
     String = ""
     for i in x:
         for j in i:
@@ -1700,45 +1702,45 @@ class drow(ui.View):
     async def w(self , button : ui.Button , inter : Integration):
         if inter.user == self.user:
             try:
-                self.FindMap = DrowFind(self.MainMap)
+                self.FindMap = await DrowFind(self.MainMap)
                 self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
                 self.MainMap[self.FindMap[0]-1][self.FindMap[1]] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
             except:
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
     
     @ui.button(label = "↓" , style = ButtonStyle.blurple)
     async def s(self , button : ui.Button , inter : Integration):
         if inter.user == self.user:
             try:
-                self.FindMap = DrowFind(self.MainMap)
+                self.FindMap = await DrowFind(self.MainMap)
                 self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
                 self.MainMap[self.FindMap[0]+1][self.FindMap[1]] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
             except:
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
 
     @ui.button(label = "←" , style = ButtonStyle.blurple)
     async def a(self , button : ui.Button , inter : Integration):
         if inter.user == self.user:
             try:
-                self.FindMap = DrowFind(self.MainMap)
+                self.FindMap = await DrowFind(self.MainMap)
                 self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
                 self.MainMap[self.FindMap[0]][self.FindMap[1]-1] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
             except:
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
 
     @ui.button(label = "→" , style = ButtonStyle.blurple)
     async def d(self , button : ui.Button , inter : Integration):
         if inter.user == self.user:
             try:
-                self.FindMap = DrowFind(self.MainMap)
+                self.FindMap = await DrowFind(self.MainMap)
                 self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
                 self.MainMap[self.FindMap[0]][self.FindMap[1]+1] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
             except:
-                await inter.message.edit(embed = Embed(description = f"```\n{DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
+                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
     
     @ui.button(label="끝내기" , style = ButtonStyle.gray)
     async def rmx(self , button : ui.Button , inter : Integration):
@@ -1793,6 +1795,7 @@ async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
     await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
     await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
 #--------------------------------------
+
 
 
 token = os.environ['BOT_TOKEN']
