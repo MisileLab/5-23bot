@@ -97,7 +97,7 @@ async def on_ready():
     uptime.start()
     # for guild in client.guilds:print(guild.name)
 
-@client.slash_command()
+@client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
     ping = int(round(client.latency * 1000))
     embed = Embed(title = "퐁!", description = ("핑 : {}ms").format(ping),color = random_color())
@@ -110,7 +110,7 @@ async def 핑(inter : Interaction):
     await inter.response.send_message(embed = embed)
 
 @client.slash_command(description = "채널을 만듬")
-async def 채널만들기(inter : Interaction , 채널이름):
+async def 채널만들기(inter : Interaction , 채널이름 : str = SlashOption(description = "채널이름")):
     if inter.user.guild_permissions.manage_channels:
         채널이름 = str(채널이름)
         채널이름 = 채널이름.replace("/","⁄").replace("#","⧣")
@@ -121,7 +121,7 @@ async def 채널만들기(inter : Interaction , 채널이름):
         return
 
 @client.slash_command(description = "임베드를 만들수 있음")
-async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") ,  생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False) , 작은설명 : str = SlashOption(required = False) , 색상 : str = SlashOption(required = False)):
+async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") ,  생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False , description = "설명") , 작은설명 : str = SlashOption(required = False , description = "작은설명") , 색상 : str = SlashOption(required = False , description = "색상")):
     try:
         if "0x" in 색상:color = eval(색상)
         else:color = eval(f"0x{색상}")
@@ -143,7 +143,7 @@ async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(des
     await inter.response.send_message(embed = embed)
 
 @client.slash_command(description = "로블록스 유저의 정보를 가저옵니다")
-async def 로블록스(inter : Interaction , 로블록스이름):
+async def 로블록스(inter : Interaction , 로블록스이름 : str = SlashOption(description = "로블록스이름")):
     name = 로블록스이름
 
     id = requests.get(f"https://api.roblox.com/users/get-by-username?username={name}").json()["Id"]
@@ -219,7 +219,7 @@ async def 로블록스(inter : Interaction , 로블록스이름):
 
 
 @client.slash_command(description="단어를 금지하거나 금지해제함")
-async def 금지단어(inter : Interaction , 단어):
+async def 금지단어(inter : Interaction , 단어 : str = SlashOption(description = "단어")):
     if inter.user.guild_permissions.manage_messages:
         guildId = inter.guild.id
         try:
@@ -254,7 +254,7 @@ async def 금지단어(inter : Interaction , 단어):
             await a.add_reaction("👁")
 
 @client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
-async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
+async def 타임아웃(inter : Interaction , 멤버 : Member = SlashOption(description = "멤버") , 시간 : str = SlashOption(description = "시간") , 사유 : str = SlashOption(description = "사유")):
     try:
         if inter.user.guild_permissions.administrator or inter.user.id == scratcher:
             try:
@@ -279,7 +279,7 @@ async def 타임아웃(inter : Interaction , 멤버 : Member , 시간 , 사유):
         await inter.response.send_message(embed = Embed(title="봇에게 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
 
 @client.slash_command(description="개발자만 사용가능" , guild_ids = [899900037700669481])
-async def 메세지보내기(inter : Interaction , id , message):
+async def 메세지보내기(inter : Interaction , id : str = SlashOption(description = "아이디") , message : str = SlashOption(description = "메세지")):
     if int(inter.channel_id) == 923831470219493376:
         member = utils.get(client.get_all_members(),id = int(id))
         try:
@@ -308,6 +308,8 @@ async def 이모지(inter : Interaction):
         emoji = (str(emojis).split(":")[2]).replace(">","")
         emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
     await inter.response.send_message(embed = Embed(title = f"이모지! {emojis}" , color = random_color()).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
+
+
 
 @client.event
 async def on_message(message):
@@ -1758,43 +1760,6 @@ class drow(ui.View):
         self.emojiID = 0
         await inter.message.edit(embed = inter.message.embeds[0])
 #버튼------------------------------------------------------
-
-@client.slash_command(description = "한국 유튜버 리스트에 유튜버추가를 요청합니다")
-async def 유튜버추가요청(inter : Interaction , 채널이름 , 짧은설명 , 길은설명 , 채널링크 , 디스코드):
-    name = str(채널이름)
-    name_lower = name.lower()
-    short_description = 짧은설명
-    description = 길은설명
-    img = inter.user.avatar
-    link = 채널링크
-    discord1 = 디스코드
-    json_message = f'''
-```json
-"{name_lower}" : [
-    "name": "{name}",
-    "short_description" : "{short_description}",
-    "description": "{description}",
-    "img": "{img}",
-    "channel": "{link}",
-    "discord": "{discord1}",
-    "heart": "0",
-    "tag": "0",
-    "tags": "0"
-]
-```'''.replace("[","{").replace("]","}")
-    await inter.response.send_message(embed = Embed(title = "전송완료" , description = json_message))
-    await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 추가요청!",description=f"{json_message}\n>>> id : {inter.user.author.id}\nname : {inter.user.author}"))
-
-@client.slash_command(description = "한국 유튜버 리스트에 유튜버정보 변경을 요청합니다")
-async def 유튜버정보변경요청(inter : Interaction , 변경할_유튜버이름 , 변경할정보 , 변경할정보의내용):
-    await inter.response.send_message(embed = Embed(title = "전송완료" , description = f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
-    await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title="유튜버 정보 변경요청!",description=f'```json\n"{변경할_유튜버이름}" | "{변경할정보}" : "{변경할정보의내용}"```'))
-
-@client.slash_command(description = "한국 유튜버 리스트에 뱃지를 요청합니다")
-async def 유튜버뱃지요청(inter : Interaction , 유튜버이름 ,뱃지):
-    await inter.response.send_message(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"```'))
-    await utils.get(client.get_guild(899900037700669481).text_channels , id = 923831470219493376).send(embed = Embed(color = random_color() , title = "뱃지요청!" , description = f'```json\n"{유튜버이름}" : "{뱃지}"'))
-#--------------------------------------
 
 
 
