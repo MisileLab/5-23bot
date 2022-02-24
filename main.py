@@ -601,11 +601,11 @@ tan 각도
         else:
             await message.channel.send("관리자가 아닙니다")
     
-    if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
-        f = open("svr.txt","r")
-        if (str(message.guild.id) in str(f.read())) == False:
-            await message.add_reaction('<:xx:905014703577772063>')
-            f.close()
+    # if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
+    #     f = open("svr.txt","r")
+    #     if (str(message.guild.id) in str(f.read())) == False:
+    #         await message.add_reaction('<:xx:905014703577772063>')
+    #         f.close()
         
     if message.content.startswith(f"{p}슬로우"):
         if message.author.guild_permissions.administrator or message.author.id == scratcher:
@@ -1760,7 +1760,6 @@ class drow(ui.View):
         self.emojiID = 0
         await inter.message.edit(embed = inter.message.embeds[0])
 #버튼------------------------------------------------------
-
 
 
 
