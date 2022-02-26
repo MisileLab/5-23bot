@@ -33,7 +33,6 @@ yt_api_key = "AIzaSyA21HLcAEjVooEfUQNLaAOf5jXdR_1r7UY"
 yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
 
 #==================================================================
-
 ran = 0
 back = 0
 scratcher = 577266050769485844
@@ -765,10 +764,12 @@ tan 각도
     if message.content.startswith(f"{p}코로나"):
         e = await message.channel.send(embed = Embed(title="사이트를 불러오는중...",color = random_color()))
         req = requests.get("https://api.corona-19.kr/korea/?serviceKey=5vH8sL1K6PGxkbIMla4r3jnAEgRuZYFqi").json()
+        req2 = requests.get("https://api.corona-19.kr/korea/country/new/?serviceKey=5vH8sL1K6PGxkbIMla4r3jnAEgRuZYFqi").json()
+
         await e.edit(embed = Embed(title="기준일을 불러오는중...",color = random_color()))
         기준 = "{}".format(req['updateTime'])
         await e.edit(embed = Embed(title="확진환자를 불러오는중...",color = random_color()))
-        확진환자 = "{}".format(req['TotalCase'])
+        확진환자 = "{} + {}".format(req['TotalCase'] , req2['korea']["newCase"])
         await e.edit(embed = Embed(title="격리해제를 불러오는중...",color = random_color()))
         격리해제 = "{} + {}".format(req['TotalRecovered'] , req['TodayRecovered'])
         await e.edit(embed = Embed(title="치료중을 불러오는중...",color = random_color()))
