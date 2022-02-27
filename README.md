@@ -25,3 +25,4 @@
 - humanfriendly
 - PyNaCl
 - nextcord[voice]
+
