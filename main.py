@@ -33,6 +33,7 @@ yt_api_key = "AIzaSyA21HLcAEjVooEfUQNLaAOf5jXdR_1r7UY"
 yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
 
 #==================================================================
+
 ran = 0
 back = 0
 scratcher = 577266050769485844
@@ -319,15 +320,6 @@ async def on_message(message):
                 await message.add_reaction("<:gongu:905014564507222016>")
     except:
         pass
-    
-    try:
-        role = utils.get(message.guild.roles,name = "음소거")
-        if not role:
-            await message.guild.create_role(name = "음소거")
-            for channel in guild.channels:
-                await channel.set_permissions(role, speak=False, send_messages=False, read_message_history=False, read_messages=True)
-    except:
-        pass
 
     if message.content.startswith(f"{p}상태"):
         await message.channel.send("""🟢│기본명령어 사용가능""")
@@ -401,37 +393,6 @@ async def on_message(message):
     #준비끝------------------------------------------------
     global ran
     global back
-
-    if message.content.startswith(f"{p}가위"):
-        rsp = randint(1,3)
-        if rsp == 1:
-            await message.channel.send("가위(비김)")
-        if rsp == 2:
-            await message.channel.send("바위(인간 패배)")
-        if rsp == 3:
-            await message.channel.send("보(인간 승)")
-    if message.content.startswith(f"{p}바위"):
-        rsp = randint(1,3)
-        if rsp == 1:
-            await message.channel.send("가위(인간 승)")
-        if rsp == 2:
-            await message.channel.send("바위(비김)")
-        if rsp == 3:
-            await message.channel.send("보(인간 패배)")
-    if message.content.startswith(f"{p}보"):
-        rsp = randint(1,3)
-        if rsp == 1:
-            await message.channel.send("가위(인간 패배)")
-        if rsp == 2:
-            await message.channel.send("바위(인간 승)")
-        if rsp == 3:
-            await message.channel.send("보(비김)")
-    if message.content.startswith("무야호"):
-        muyato1 = randint(1,2)
-        if muyato1 == 1:
-            await message.channel.send("그만큼 신나시다는거지~")
-        if muyato1 == 2:
-            await message.channel.send("그만큼 반가우시다는거지~")
 
     if message.content.startswith(f"{p}투표"):
         await message.delete()
@@ -512,37 +473,6 @@ tan 각도
         embed = Embed(title = "tan {} = {}".format(t , tan(t)) , color = 0xff0000)
         await message.channel.send(embed = embed)
 
-    if message.content.startswith(f"{p}주사위"):
-        r = message.content[5:].split("/")
-        r_int = randint(int(r[1]),int(r[2]))
-        if r_int == r[1]: 
-            color_random = 0x000000
-        elif r_int == r[2]: 
-            color_random = 0xff0000
-        else : 
-            color_random = 0x00ff00
-        await message.delete()
-        embed = Embed(title = "{}님이 주사위를던짐니다".format(message.author.name) , description = "나온수 : {}".format(r_int) , color = color_random)
-        embed.set_footer(text = "랜덤 : {}~{}".format(int(r[1]),int(r[2])))
-        await message.channel.send(embed = embed)
-
-    if message.content.startswith(f"{p}랜덤"):
-        r = message.content[5:].split("/")
-        await message.delete()
-        embed = Embed(title = "{}님의 선택!".format(message.author.name) , description = "결과 : {}".format(choice(r)) , color = 0x00ffff)
-        embed.set_footer(text = "랜덤 : {}".format(r))
-        await message.channel.send(embed = embed)
-
-    if message.content.startswith(f"{p}도배"):
-        if message.author.id == scratcher or message.author.guild_permissions.administrator:
-            text2 = message.content[4:].split("/")
-            await message.delete()
-            embed = Embed(title = f"{p}도배",description = str(text2[1])*int(text2[2]),color = 0xff00ff)
-            embed.set_footer(text = "by - {}".format(message.author.name))
-            await message.channel.send(embed = embed)
-        else:
-            embed = Embed(title ="{}님은 5도배를 사용할권한이 없습니다".format(message.author.name),color = 0x000fff)
-            await message.channel.send(embed=embed)
     if message.content.startswith(f"{p}정보"):
         try: 
             user = message.mentions[0]
@@ -831,27 +761,7 @@ tan 각도
                     await message.channel.send(embed = embed)
             except:
                 await message.reply(embed = Embed(title="오류!",description="명령어를 제대로 사용해주세요",color = 0xff0000))
-    
-    if message.content.startswith(f"{p}음소거"):
-        if message.author.guild_permissions.administrator or message.author.id == scratcher:
-            user = message.mentions[0]
-            if "음소거" in str(user.roles):
-                nope = 1
-            else:
-                nope = 0
-            if nope == 0:
-                for i in user.roles:
-                    try:
-                        await user.remove_roles(i)
-                    except:
-                        pass
-                await user.add_roles(utils.get(message.guild.roles,name = "음소거"))
-                await message.reply("음소거 추가완료")
-            else:
-                await user.remove_roles(utils.get(message.guild.roles,name = "음소거"))
-                await message.reply("음소거 제거완료")
-        else:
-            await message.reply("권한이없어요")
+
     if message.content.startswith(f"{p}유튜브"):
         try:
             txt = str(message.content).replace(f"{p}유튜브","")
@@ -1178,19 +1088,9 @@ tan 각도
     if message.content.startswith(f"{p}명령어"):
         embed = Embed(title = "명령어",color = 0x00ff00)
         embed.add_field(name="기본 명령어 - 1",value=f"""
->>> 무야호
-{p}명령어
-{p}가위
-{p}바위
-{p}보
-{p}수학
+>>> {p}수학
 {p}업타임
-""")
-        embed.add_field(name="기본 명령어 - 2",value=f"""
->>> {p}주사위 /작은수/큰수
 {p}투표 /이름/항목1/항목2/항목3....
-{p}랜덤 /항목1/항목2..../항목x
-{p}도배 /글/개수
 {p}정보
 {p}타이머 초
 {p}현재
@@ -1692,7 +1592,6 @@ async def DrowMapLoad(x):
     return MainString
 
 
-
 class drow(ui.View):
     def __init__(self , user , map):
         super().__init__(timeout=600)
@@ -1760,6 +1659,54 @@ class drow(ui.View):
     async def white(self , button : ui.Button , inter : Integration):
         self.emojiID = 0
         await inter.message.edit(embed = inter.message.embeds[0])
+
+@client.slash_command(description = "투표")
+async def 투표(inter : Interaction , 투표제목 : str = SlashOption(description = "투표의 제목을 써주세요") , 색상 : str = SlashOption(required = False , description = "색상")):
+    if (색상 == None):
+        color = random_color()
+    else:
+        색상 = 색상.replace("0x" , "")
+        색상 = 색상.replace("#" , "")
+        color = eval(f"0x{색상}")
+    embed = Embed(title = 투표제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
+    await inter.response.send_message(embed = embed , view = vote1(title = 투표제목))
+
+class vote1(ui.View):
+    def __init__(self , title = None):
+        super().__init__(timeout = None)
+        self.title = title
+        self.yesALL = []
+        self.noALL = []
+
+    @ui.button(emoji = "<:good:905078721881452565>" , style = ButtonStyle.green)
+    async def yes(self , button : ui.Button , inter : Integration):
+        if ((inter.user.id in self.yesALL) == False):
+            try:self.noALL.remove(inter.user.id)
+            except:pass
+
+            try:self.yesALL.append(inter.user.id)
+            except:pass
+
+            description = f"<:good:905078721881452565> | {len(self.yesALL)}\n<:nooo:905078780421369946> | {len(self.noALL)}"
+            embed = Embed(title = self.title , description = description , color = inter.message.embeds[0].color)
+            await inter.message.edit(embed = embed)
+        else:
+            await inter.response.send_message("이미 <:good:905078721881452565>에 투표를 하였습니다" , ephemeral = True)
+    @ui.button(emoji = "<:nooo:905078780421369946>" , style = ButtonStyle.red)
+    async def no(self , button : ui.Button , inter : Integration):
+        if ((inter.user.id in self.noALL) == False):
+            try:self.noALL.append(inter.user.id)
+            except:pass
+
+            try:self.yesALL.remove(inter.user.id)
+            except:pass
+
+            description = f"<:good:905078721881452565> | {len(self.yesALL)}\n<:nooo:905078780421369946> | {len(self.noALL)}"
+            embed = Embed(title = self.title , description = description , color = inter.message.embeds[0].color)
+            await inter.message.edit(embed = embed)
+        else:
+            await inter.response.send_message(">>> 이미 <:nooo:905078780421369946>에 투표를 하였습니다" , ephemeral = True)
+
 #버튼------------------------------------------------------
 
 
