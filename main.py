@@ -309,6 +309,16 @@ async def 이모지(inter : Interaction):
         emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
     await inter.response.send_message(embed = Embed(title = f"이모지! {emojis}" , color = random_color()).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
 
+@client.slash_command(description = "투표")
+async def 투표(inter : Interaction , 투표제목 : str = SlashOption(description = "투표의 제목을 써주세요") , 색상 : str = SlashOption(required = False , description = "색상")):
+    if (색상 == None):
+        color = random_color()
+    else:
+        색상 = 색상.replace("0x" , "")
+        색상 = 색상.replace("#" , "")
+        color = eval(f"0x{색상}")
+    embed = Embed(title = 투표제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
+    await inter.response.send_message(embed = embed , view = vote1(title = 투표제목))
 
 
 @client.event
@@ -1659,17 +1669,6 @@ class drow(ui.View):
     async def white(self , button : ui.Button , inter : Integration):
         self.emojiID = 0
         await inter.message.edit(embed = inter.message.embeds[0])
-
-@client.slash_command(description = "투표")
-async def 투표(inter : Interaction , 투표제목 : str = SlashOption(description = "투표의 제목을 써주세요") , 색상 : str = SlashOption(required = False , description = "색상")):
-    if (색상 == None):
-        color = random_color()
-    else:
-        색상 = 색상.replace("0x" , "")
-        색상 = 색상.replace("#" , "")
-        color = eval(f"0x{색상}")
-    embed = Embed(title = 투표제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
-    await inter.response.send_message(embed = embed , view = vote1(title = 투표제목))
 
 class vote1(ui.View):
     def __init__(self , title = None):
