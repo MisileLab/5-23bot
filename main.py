@@ -1110,7 +1110,7 @@ tan 각도
 {p}이모지 커스텀이모지
 {p}봇 @봇 멘션
 {p}요청 [한국 유튜버리스트](https://site-main.scratcher5-23.repl.co) 에 유튜버 추가를 요청함
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="게임 명령어",value=f"""
 >>> {p}벌기
 {p}도박 숫자
@@ -1119,7 +1119,7 @@ tan 각도
 {p}입금 @멘션
 {p}참가
 {p}끝말잇기
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="권한필요 명령어",value=f"""
 >>> {p}공지 /이름/글 ```어드민 필요```
 {p}슬로우 초 ```어드민필요```
@@ -1129,31 +1129,31 @@ tan 각도
 {p}밴 @멘션 사유 ```유저밴 필요```
 {p}추가 @멘션 @역할 ```어드민```
 {p}제거 @멘션 @역할 ```어드민```
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="삭제 명령어",value=f"""
 >>> {p}청소 숫자 ```메세지관리 필요```
 {p}clear 숫자 ```메세지관리 필요```
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="음악 명령어",value=f"""
 >>> {p}들어와
 {p}나가
 {p}재생 url
 {p}정지
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="버튼 명령어",value=f"""
 >>> {p}버튼
 {p}계산기
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="셀렉트 명령어",value=f"""
 >>> {p}봇정보
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="AI",value=f"""
 >>> //단어 ```핑퐁 빌더 지원```
-""" , inline = True)
+""" , inline = False)
         embed.add_field(name="개발자 명령어",value=f"""
 >>> {p}답변 @멘션/내용
 {p}답장 @멘션/내용
-""" , inline = True)
+""" , inline = False)
         embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
         await message.channel.send(embed = embed)
     
