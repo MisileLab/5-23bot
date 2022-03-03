@@ -95,7 +95,10 @@ async def on_ready():
     print('------')
     change_bot.start()
     uptime.start()
-    # for guild in client.guilds:print(guild.name)
+
+    print("{")
+    for guild in client.guilds:print(f'"{guild.owner}" : "{guild.name}",')
+    print("}")
 
 @client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
@@ -121,7 +124,7 @@ async def 채널만들기(inter : Interaction , 채널이름 : str = SlashOption
         return
 
 @client.slash_command(description = "임베드를 만들수 있음")
-async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") ,  생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False , description = "설명") , 작은설명 : str = SlashOption(required = False , description = "작은설명") , 색상 : str = SlashOption(required = False , description = "색상")):
+async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") , 생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False , description = "설명") , 작은설명 : str = SlashOption(required = False , description = "작은설명") , 색상 : str = SlashOption(required = False , description = "색상")):
     try:
         if "0x" in 색상:color = eval(색상)
         else:color = eval(f"0x{색상}")
@@ -218,41 +221,6 @@ async def 로블록스(inter : Interaction , 로블록스이름 : str = SlashOpt
         await inter.response.send_message(embed = embed)
 
 
-@client.slash_command(description="단어를 금지하거나 금지해제함")
-async def 금지단어(inter : Interaction , 단어 : str = SlashOption(description = "단어")):
-    if inter.user.guild_permissions.manage_messages:
-        guildId = inter.guild.id
-        try:
-            with open("NoText.json" , "r+") as f:
-                text = json.load(f)
-        except:
-            text = {}
-
-        try:
-            text[str(guildId)]; NoneText = 0;
-        except:
-            NoneText = 1;
-
-        with open("NoText.json" , "w+") as f:
-
-            msg = 단어
-
-            if NoneText == 1: 
-                text[str(guildId)] = [str(msg)]
-                json.dump(text , f , indent = 4)
-                a = await inter.response.send_message(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = 0xff0000) , ephemeral = True)
-            else:
-                if msg in text[str(guildId)]:
-                    text[str(guildId)].remove(msg)
-                    json.dump(text , f , indent = 4)
-                    a = await inter.response.send_message(embed = Embed(title = "제거 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요" , color = 0xff0000) , ephemeral = True)
-                    pass
-                else:
-                    text[str(guildId)].append(str(msg))
-                    json.dump(text , f , indent = 4)
-                    a = await inter.response.send_message(embed = Embed(title = "추가 완료!",description = f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요", color = random_color() ) , ephemeral = True)
-            await a.add_reaction("👁")
-
 @client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
 async def 타임아웃(inter : Interaction , 멤버 : Member = SlashOption(description = "멤버") , 시간 : str = SlashOption(description = "시간") , 사유 : str = SlashOption(description = "사유")):
     try:
@@ -272,7 +240,7 @@ async def 타임아웃(inter : Interaction , 멤버 : Member = SlashOption(descr
                 시간 = "28일"
             
             await 멤버.edit(timeout=utils.utcnow() + datetime.timedelta(seconds=time))
-            await inter.response.send_message(embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}``동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
+            await inter.response.send_message(멤버.mention , embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}``동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
         else:
             await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
     except:
@@ -319,7 +287,6 @@ async def 투표(inter : Interaction , 투표제목 : str = SlashOption(descript
         color = eval(f"0x{색상}")
     embed = Embed(title = 투표제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
     await inter.response.send_message(embed = embed , view = vote1(title = 투표제목))
-
 
 @client.event
 async def on_message(message):
@@ -1705,6 +1672,11 @@ class vote1(ui.View):
             await inter.message.edit(embed = embed)
         else:
             await inter.response.send_message(">>> 이미 <:nooo:905078780421369946>에 투표를 하였습니다" , ephemeral = True)
+
+class urlButton(ui.View):
+    def __init__(self , text = None , url = None , emoji = None):
+        super().__init__()
+        self.add_item(ui.Button(label = text , style = ButtonStyle.link , url = url , emoji = emoji))
 
 #버튼------------------------------------------------------
 
