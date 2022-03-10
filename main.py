@@ -96,9 +96,10 @@ async def on_ready():
     change_bot.start()
     uptime.start()
 
-    print("{")
-    for guild in client.guilds:print(f'"{guild.owner}" : "{guild.name}",')
-    print("}")
+    ch = client.get_channel(949223351426105354)
+    embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
+    embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
+    await ch.send(embed = embed , view = urlButton())
 
 @client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
@@ -291,12 +292,6 @@ async def 투표(inter : Interaction , 투표제목 : str = SlashOption(descript
 @client.event
 async def on_message(message):
     #준비시작------------------------------------------------
-    try:
-        if str(message.channel.type) == "private":
-            if message.author.bot == False:
-                await message.add_reaction("<:gongu:905014564507222016>")
-    except:
-        pass
 
     if message.content.startswith(f"{p}상태"):
         await message.channel.send("""🟢│기본명령어 사용가능""")
@@ -1287,23 +1282,6 @@ async def on_reaction_add(reaction, user):
                 if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
                     await reaction.message.author.send(embed = Embed(title = "메세지 삭제",description = f"{user}님의의해 당신의 [링크]({reaction.message.content}) 가 삭제되었습니다"))
                     await reaction.message.delete()
-        if str(reaction.message.channel.type) == "private":
-            if str(reaction.emoji) == "<:gongu:905014564507222016>":
-                try:
-                    if str(reaction.message.channel.type) == "private":
-                        embed = Embed(title = f"{user}님이 문의를 하였습니다",description = f"내용 : {reaction.message.content}\n 멘션:{user.mention}\nid:{user.id}",timestamp=reaction.message.created_at)
-                        try: 
-                            img = str(message.attachments[0])
-                            embed.set_image(url = img)
-                        except: 
-                            pass
-                        await client.get_channel(885802901124046848).send(embed = embed)
-                        await message.reply(">>> 문의가 완료되었습니다")
-                        print(1)
-                    else:
-                        print(2)
-                except:
-                    print(0)
 #버튼------------------------------------------------------
 class org_but(ui.View):
     @ui.button(label="버튼",style=ButtonStyle.green)
@@ -1674,9 +1652,10 @@ class vote1(ui.View):
             await inter.response.send_message(">>> 이미 <:nooo:905078780421369946>에 투표를 하였습니다" , ephemeral = True)
 
 class urlButton(ui.View):
-    def __init__(self , text = None , url = None , emoji = None):
+    def __init__(self):
         super().__init__()
-        self.add_item(ui.Button(label = text , style = ButtonStyle.link , url = url , emoji = emoji))
+        self.add_item(ui.Button(label = "초대링크" , style = ButtonStyle.link , url = "https://discord.com/channels/949217844548235264/949217845160591422/949228008294723624" , emoji = "<:channel_store:936061731636133948>"))
+        self.add_item(ui.Button(label = "어드민" , style = ButtonStyle.link , url = "https://discord.com/users/577266050769485844" , emoji = "<:setting:911307927367864350>"))
 
 #버튼------------------------------------------------------
 
