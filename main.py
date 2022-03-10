@@ -96,10 +96,10 @@ async def on_ready():
     change_bot.start()
     uptime.start()
 
-    ch = client.get_channel(949223351426105354)
-    embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
-    embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
-    await ch.send(embed = embed , view = urlButton())
+#     ch = client.get_channel(949223351426105354)
+#     embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
+#     embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
+#     await ch.send(embed = embed , view = urlButton())
 
 @client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
