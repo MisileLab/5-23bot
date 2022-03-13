@@ -17,7 +17,7 @@ from math import *
 from datetime import *
 from nextcord import channel
 from time import *
-from nextcord.ext import commands,tasks
+from nextcord.ext import commands,tasks,activities
 from nextcord.http import Route
 import youtube_dl
 from youtube_dl import *
