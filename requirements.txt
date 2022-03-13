@@ -10,3 +10,4 @@ PingPongTool
 humanfriendly
 PyNaCl
 nextcord[voice]
+nextcord-ext-activities
