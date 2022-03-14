@@ -47,7 +47,7 @@ five = 871348411356545057
 
 intents = Intents.default()
 INTENTS = Intents.all()
-p = "55"
+p = "5"
 client = commands.Bot(command_prefix = p,intents=INTENTS)
 
 def random_color():
