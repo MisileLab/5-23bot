@@ -88,15 +88,15 @@ async def uptime():
         uptime_d += 1
     
 @client.slash_command(description = "게임을 합니다(베타)")
-async def 게임(inter : Interaction , 게임 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = ["포커" , "유튜브" , "스케치"] ) ):
-    channel = inter.user.voice.channel.connect()
+async def 게임(inter : Interaction , 게임 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = ["스케치" , "포커" , "유튜브"] ) ):
+    channel = inter.user.voice.channel
     game = activities.Activity
     if 게임 == "포커": game = game.poker
     elif 게임 == "유튜브": game = game.youtube
     elif 게임 == "스케치": game = game.sketch
 
     invite_link = await channel.create_activity_invite(game)
-    await inter.response.send_message(inviteGAME(title = "참가하기" , url = invite_link))
+    await inter.response.send_message(embed = Embed(title = f"{게임}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
 
 @client.event
 async def on_ready():
