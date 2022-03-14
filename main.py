@@ -88,14 +88,15 @@ async def uptime():
         uptime_d += 1
     
 @client.slash_command(description = "게임을 합니다(베타)")
-async def 게임(inter : Interaction , 게임 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = ["포커" , "유튜브"] ) ):
+async def 게임(inter : Interaction , 게임 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = ["포커" , "유튜브" , "스케치"] ) ):
     channel = inter.user.voice.channel.connect()
     game = activities.Activity
     if 게임 == "포커": game = game.poker
     elif 게임 == "유튜브": game = game.youtube
+    elif 게임 == "스케치": game = game.sketch
 
     invite_link = await channel.create_activity_invite(game)
-    await inter.response.send_message(invite_link)
+    await inter.response.send_message(inviteGAME(title = "참가하기" , url = invite_link))
 
 @client.event
 async def on_ready():
@@ -1669,8 +1670,14 @@ class urlButton(ui.View):
         self.add_item(ui.Button(label = "초대링크" , style = ButtonStyle.link , url = "https://discord.com/channels/949217844548235264/949217845160591422/949228008294723624" , emoji = "<:channel_store:936061731636133948>"))
         self.add_item(ui.Button(label = "어드민" , style = ButtonStyle.link , url = "https://discord.com/users/577266050769485844" , emoji = "<:setting:911307927367864350>"))
 
-#버튼------------------------------------------------------
+class inviteGAME(ui.View):
+    def __init__(self , title , url):
+        super().__init__()
+        self.title = title
+        self.url = url
+        self.add_item(ui.Button(label = self.title , style = ButtonStyle.link , url = self.url , emoji = "<:game:936067292809269348>"))
 
+#버튼------------------------------------------------------
 
 token = os.environ['BOT_TOKEN']
 client.run(token)
