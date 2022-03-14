@@ -96,10 +96,10 @@ async def on_ready():
     change_bot.start()
     uptime.start()
 
-#     ch = client.get_channel(949223351426105354)
-#     embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
-#     embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
-#     await ch.send(embed = embed , view = urlButton())
+    # ch = client.get_channel(949223351426105354)
+    # embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
+    # embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
+    # await ch.send(embed = embed , view = urlButton())
 
 @client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
@@ -812,7 +812,7 @@ tan 각도
             embed = Embed(title=f'"{message.guild.name}"의 정보',color = ran_col)
             embed.set_thumbnail(url=message.guild.icon)
             embed.add_field(name="서버주인",value=str(message.guild.owner.mention)+"ㅤ")
-            embed.add_field(name="인증단계",value=(str(message.guild.verification_level)+"ㅤ").replace("none","없음").replace("low","낮음").replace("medium","중간").replace("high","높음").replace("highest","매우 높음") )
+            embed.add_field(name="인증단계",value=(str(message.guild.verification_level)+"ㅤ").replace("none","없음").replace("low","낮음").replace("medium","중간").replace("highest","매우 높음").replace("high","높음") )
             user_ = str(datetime.datetime.utcfromtimestamp(((int(message.guild.id) >> 22) + 1420070400000) / 1000))
             embed.add_field(name="생성일",value=f"{user_[:4]}년{user_[5:7]}월{user_[8:10]}일ㅤ")
             embed.add_field(name="멤버",value=f"{message.guild.member_count}명ㅤ")
@@ -1658,7 +1658,6 @@ class urlButton(ui.View):
         self.add_item(ui.Button(label = "어드민" , style = ButtonStyle.link , url = "https://discord.com/users/577266050769485844" , emoji = "<:setting:911307927367864350>"))
 
 #버튼------------------------------------------------------
-
 
 
 token = os.environ['BOT_TOKEN']
