@@ -45,8 +45,9 @@ siba = 782841803530567680
 madle = 849777888231555123
 five = 871348411356545057
 
+intents = Intents.default()
 INTENTS = Intents.all()
-p = "5"
+p = "55"
 client = commands.Bot(command_prefix = p,intents=INTENTS)
 
 def random_color():
@@ -57,6 +58,7 @@ def musicPlay(url , voice , option):
 
 @tasks.loop()
 async def change_bot():
+    # await client.change_presence(activity=Streaming(name = "정검중" , url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
     await client.change_presence(activity=Streaming(name=" | 서버수:{} | 핑:{}ms | ".format(len(client.guilds),int(client.latency * 1000)), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
     await asyncio.sleep(5)
     await client.change_presence(activity=Streaming(name=f" | {p}명령어 | ", url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
@@ -85,6 +87,15 @@ async def uptime():
         uptime_h = 0
         uptime_d += 1
     
+@client.slash_command(description = "게임을 합니다(베타)")
+async def 게임(inter : Interaction , 게임 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = ["포커" , "유튜브"] ) ):
+    channel = inter.user.voice.channel.connect()
+    game = activities.Activity
+    if 게임 == "포커": game = game.poker
+    elif 게임 == "유튜브": game = game.youtube
+
+    invite_link = await channel.create_activity_invite(game)
+    await inter.response.send_message(invite_link)
 
 @client.event
 async def on_ready():
@@ -1258,6 +1269,7 @@ tan 각도
         else:
             await msg.edit(embed = Embed(title="활성화여부",description="링크삭제 활성화됨"))
         f1.close()
+    # await client.process_commands(message)
     
 #----------------리액션-----------------#
 @client.event
