@@ -86,17 +86,7 @@ async def uptime():
     if uptime_h >= 24:
         uptime_h = 0
         uptime_d += 1
-    
-@client.slash_command(description = "게임을 합니다(베타)")
-async def 게임(inter : Interaction , 게임 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = ["스케치" , "포커" , "유튜브"] ) ):
-    channel = inter.user.voice.channel
-    game = activities.Activity
-    if 게임 == "포커": game = game.poker
-    elif 게임 == "유튜브": game = game.youtube
-    elif 게임 == "스케치": game = game.sketch
 
-    invite_link = await channel.create_activity_invite(game)
-    await inter.response.send_message(embed = Embed(title = f"{게임}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
 
 @client.event
 async def on_ready():
@@ -300,6 +290,33 @@ async def 투표(inter : Interaction , 투표제목 : str = SlashOption(descript
         color = eval(f"0x{색상}")
     embed = Embed(title = 투표제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
     await inter.response.send_message(embed = embed , view = vote1(title = 투표제목))
+
+gameList = ["유튜브" , "스케치" , "베트레일" , "피싱턴" , "워드스넥" , "포커(부스트)" , "체스(부스트)" , "체커(부스트)" , "오초(부스트)" , "글자타일(부스트)" , "글자맟추기(부스트)" , "글자리그(부스트)" , "아쿠워드(부스트)"]
+
+@client.slash_command(description = "게임을 합니다(베타)")
+async def 게임(inter : Interaction , 종목 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = gameList ) ):
+    try:
+        channel = inter.user.voice.channel
+    except:
+        await inter.response.send_message("먼저 음성채널에 들어가주세요" , ephemeral=True)
+        return
+    game = activities.Activity
+    if 게임 == "유튜브": game = game.youtube
+    elif 게임 == "스케치": game = game.sketch
+    elif 게임 == "베트레일": game = game.betrayal
+    elif 게임 == "피싱턴": game = game.fishington
+    elif 게임 == "워드스넥": game = game.word_snacks
+    elif 게임 == "포커(부스트)": game = game.poker
+    elif 게임 == "체스(부스트)": game = game.chess
+    elif 게임 == "체커(부스트)": game = game.checker
+    elif 게임 == "오초(부스트)": game = game.ocho
+    elif 게임 == "글자타일(부스트)": game = game.letter_tile
+    elif 게임 == "글자맟추기(부스트)": game = game.spellcast
+    elif 게임 == "글자리그(부스트)": game = game.letter_league
+    elif 게임 == "아쿠워드(부스트)": game = game.awkword
+
+    invite_link = await channel.create_activity_invite(game)
+    await inter.response.send_message(embed = Embed(title = f"{게임}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
 
 @client.event
 async def on_message(message):
@@ -1066,8 +1083,6 @@ tan 각도
         await message.reply(embed = Embed(description = f"```\n{await DrowMapLoad(MainMap)}\n```" , color = random_color()) , view = drow(message.author , MainMap))
 
 #게임-----------------------------------------------------------------------------------------------------------
-    if message.content.startswith(f"{p}개발자") or message.content.startswith(f"{p}hellothisisverification"):
-        await message.channel.send(embed = Embed(title="개발자 : SCRATCHER 5-23♪#9017",description = "개발자서버 : http://discord.5-23.kro.kr/\n봇초대 : http://discord.5-23bot.kro.kr/"))
 #-----------------------------!명령어----------------------------#
     if message.content.startswith(f"{p}명령어"):
         embed = Embed(title = "명령어",color = 0x00ff00)
@@ -1128,8 +1143,8 @@ tan 각도
 >>> {p}답변 @멘션/내용
 {p}답장 @멘션/내용
 """ , inline = False)
-        embed.set_footer(text="개발자:SCRATCHER 5-23♪#9017", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
-        await message.channel.send(embed = embed)
+        embed.set_footer(text="개발자:SCRATCHER 5-23♪#9999", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
+        await message.channel.send(embed = embed , view = Update())
     
 
 #--------------------------------------음악--------------------------------------#
@@ -1676,6 +1691,11 @@ class inviteGAME(ui.View):
         self.title = title
         self.url = url
         self.add_item(ui.Button(label = self.title , style = ButtonStyle.link , url = self.url , emoji = "<:game:936067292809269348>"))
+
+class Update(ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(ui.Button(label = "업데이트소식" , style = ButtonStyle.link , url = "https://github.com/5-23/5-23bot/blob/main/info/update.md" , emoji = "<:game:936067292809269348>"))
 
 #버튼------------------------------------------------------
 
