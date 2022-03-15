@@ -290,22 +290,22 @@ async def 게임(inter : Interaction , 종목 : str = SlashOption(description = 
         await inter.response.send_message("먼저 음성채널에 들어가주세요" , ephemeral=True)
         return
     game = activities.Activity
-    if 게임 == "유튜브": game = game.youtube
-    elif 게임 == "스케치": game = game.sketch
-    elif 게임 == "베트레일": game = game.betrayal
-    elif 게임 == "피싱턴": game = game.fishington
-    elif 게임 == "워드스넥": game = game.word_snacks
-    elif 게임 == "포커(부스트)": game = game.poker
-    elif 게임 == "체스(부스트)": game = game.chess
-    elif 게임 == "체커(부스트)": game = game.checker
-    elif 게임 == "오초(부스트)": game = game.ocho
-    elif 게임 == "글자타일(부스트)": game = game.letter_tile
-    elif 게임 == "글자맟추기(부스트)": game = game.spellcast
-    elif 게임 == "글자리그(부스트)": game = game.letter_league
-    elif 게임 == "아쿠워드(부스트)": game = game.awkword
+    if 종목 == "유튜브": game = game.youtube
+    elif 종목 == "스케치": game = game.sketch
+    elif 종목 == "베트레일": game = game.betrayal
+    elif 종목 == "피싱턴": game = game.fishington
+    elif 종목 == "워드스넥": game = game.word_snacks
+    elif 종목 == "포커(부스트)": game = game.poker
+    elif 종목 == "체스(부스트)": game = game.chess
+    elif 종목 == "체커(부스트)": game = game.checker
+    elif 종목 == "오초(부스트)": game = game.ocho
+    elif 종목 == "글자타일(부스트)": game = game.letter_tile
+    elif 종목 == "글자맟추기(부스트)": game = game.spellcast
+    elif 종목 == "글자리그(부스트)": game = game.letter_league
+    elif 종목 == "아쿠워드(부스트)": game = game.awkword
 
     invite_link = await channel.create_activity_invite(game)
-    await inter.response.send_message(embed = Embed(title = f"{게임}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
+    await inter.response.send_message(embed = Embed(title = f"{종목}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
 
 @client.event
 async def on_message(message):
@@ -1512,7 +1512,7 @@ class inviteGAME(ui.View):
         super().__init__()
         self.title = title
         self.url = url
-        self.add_item(ui.Button(label = self.title , style = ButtonStyle.link , url = self.url , emoji = "<:game:936067292809269348>"))
+        self.add_item(ui.Button(label = str(self.title) , style = ButtonStyle.link , url = str(self.url) , emoji = "<:game:936067292809269348>"))
 
 class Update(ui.View):
     def __init__(self):
