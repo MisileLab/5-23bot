@@ -63,9 +63,9 @@ async def change_bot():
     for i in client.guilds:
         member += i.member_count
     await client.change_presence(activity=Streaming(name=" | 이용자:{}명 | ".format(member), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
-    await asyncio.sleep(1)
+    await asyncio.sleep(5)
     await client.change_presence(activity=Streaming(name=" | 서버수:{} | ".format(len(client.guilds)), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
-    await asyncio.sleep(1)
+    await asyncio.sleep(5)
 
 uptime_s = 0
 uptime_m = 0
