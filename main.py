@@ -101,6 +101,9 @@ async def on_ready():
     change_bot.start()
     uptime.start()
 
+    for i in client.guilds:
+        print(f"{i.name} : {len(i.members)}")
+
     # ch = client.get_channel(949223351426105354)
     # embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
     # embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
@@ -687,9 +690,13 @@ async def on_message(message):
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
-            await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}.",color = 0xff0000))
-            await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
-            await user.kick()
+            msg1 = await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}.",color = 0xff0000))
+            msg2 = await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
+            try:
+                await user.kick()
+            except:
+                await msg1.edit(embed = Embed(title=f"실패하였습니다",description=f"이유:권한부족",color = 0xff0000))
+                await msg2.delete()
         else:
             await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
     if message.content.startswith(f"{p}밴") or message.content.startswith(f"{p}벤"):
@@ -697,9 +704,13 @@ async def on_message(message):
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
-            await user.send(embed = Embed(title=f"{message.author}님이 당신을 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
-            await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}.",color = 0xff0000))
-            await user.ban()
+            msg1 = await user.send(embed = Embed(title=f"{message.author}님이 당신을 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
+            msg2 = await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}.",color = 0xff0000))
+            try:
+                await user.ban()
+            except:
+                await msg1.edit(embed = Embed(title=f"실패하였습니다",description=f"이유:권한부족",color = 0xff0000))
+                await msg2.delete()
         else:
             await message.channel.send(embed = Embed(title="권한이 없어요",color=0xff0000))
     
@@ -1301,7 +1312,7 @@ class Update(ui.View):
 > 봇의 핑을 보여줍니다"
 # /임베드만들기 <제목> <생성일> <설명> <작은설명> <색상>
 > 임베드를 만듭니다
-# /로블록스
+# /로블록스 <유저이름>
 > 로블록스 유저의 정보를 가저옵니다
 # /타임아웃 <시간>
 > 멤버를 타임아웃(뮤트) 시킴니다.
