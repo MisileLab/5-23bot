@@ -59,10 +59,13 @@ def musicPlay(url , voice , option):
 @tasks.loop()
 async def change_bot():
     # await client.change_presence(activity=Streaming(name = "정검중" , url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
-    await client.change_presence(activity=Streaming(name=" | 서버수:{} | 핑:{}ms | ".format(len(client.guilds),int(client.latency * 1000)), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
-    await asyncio.sleep(5)
-    await client.change_presence(activity=Streaming(name=f" | {p}명령어 | ", url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
-    await asyncio.sleep(5)
+    member = 0
+    for i in client.guilds:
+        member += i.member_count
+    await client.change_presence(activity=Streaming(name=" | 이용자:{}명 | ".format(member), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
+    await asyncio.sleep(1)
+    await client.change_presence(activity=Streaming(name=" | 서버수:{} | ".format(len(client.guilds)), url='https://www.youtube.com/watch?v=dWwRF4uewO8'))
+    await asyncio.sleep(1)
 
 uptime_s = 0
 uptime_m = 0
@@ -103,6 +106,12 @@ async def on_ready():
     # embed.set_footer(text = "이기능은 이봇에 존제하지않습니다.")
     # await ch.send(embed = embed , view = urlButton())
 
+@client.slash_command(description = "명령어를 보여줍니다")
+async def 명령어(inter : Interaction):
+    embed = Embed(title = "명령어" , description = "아래를 눌러서 선택하세요",color = 0x00ff00)
+    embed.set_footer(text=f"개발자:{utils.get(client.get_all_members(),id = scratcher)}", icon_url=f"{utils.get(client.get_all_members(),id = five).avatar}")
+    await inter.response.send_message(embed = embed , view = Update(inter.user))
+
 @client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
     ping = int(round(client.latency * 1000))
@@ -115,7 +124,7 @@ async def 핑(inter : Interaction):
         embed.add_field(name = "비정상 :red_square:" ,value = "by - {}".format(inter.user.name))
     await inter.response.send_message(embed = embed)
 
-@client.slash_command(description = "임베드를 만들수 있음")
+@client.slash_command(description = "임베드를 만듭니다")
 async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") , 생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False , description = "설명") , 작은설명 : str = SlashOption(required = False , description = "작은설명") , 색상 : str = SlashOption(required = False , description = "색상")):
     try:
         if "0x" in 색상:color = eval(색상)
@@ -238,20 +247,7 @@ async def 타임아웃(inter : Interaction , 멤버 : Member = SlashOption(descr
     except:
         await inter.response.send_message(embed = Embed(title="봇에게 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
 
-@client.slash_command(description="개발자만 사용가능" , guild_ids = [899900037700669481])
-async def 메세지보내기(inter : Interaction , id : str = SlashOption(description = "아이디") , message : str = SlashOption(description = "메세지")):
-    if int(inter.channel_id) == 923831470219493376:
-        member = utils.get(client.get_all_members(),id = int(id))
-        try:
-            await member.send(embed = Embed(title = "개발자에게서 메세지가 왔어요!" , description= f">>> {message}" , color = random_color() ))
-            await inter.response.send_message(f"```ini\n[메세지보내기 성공] {message}```")
-        except:
-            await inter.send("```메세지를 보네지 못했어요!```")
-    else:
-        await inter.response.send_message(">>> 개발자만 사용할수 있어요!" , ephemeral = True)
-
-
-@client.slash_command(description = "랜덤으로 이모지를 보냅니다.")
+@client.slash_command(description = "랜덤으로 이모지를 보냅니다")
 async def 이모지(inter : Interaction):
     def emojiLoop():
         global emojis
@@ -269,16 +265,16 @@ async def 이모지(inter : Interaction):
         emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
     await inter.response.send_message(embed = Embed(title = f"이모지! {emojis}" , color = random_color()).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
 
-@client.slash_command(description = "투표")
-async def 투표(inter : Interaction , 투표제목 : str = SlashOption(description = "투표의 제목을 써주세요") , 색상 : str = SlashOption(required = False , description = "색상")):
+@client.slash_command(description = "찬반 투표를 합니다")
+async def 투표(inter : Interaction , 제목 : str = SlashOption(description = "투표의 제목을 써주세요") , 색상 : str = SlashOption(required = False , description = "색상")):
     if (색상 == None):
         color = random_color()
     else:
         색상 = 색상.replace("0x" , "")
         색상 = 색상.replace("#" , "")
         color = eval(f"0x{색상}")
-    embed = Embed(title = 투표제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
-    await inter.response.send_message(embed = embed , view = vote1(title = 투표제목))
+    embed = Embed(title = 제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
+    await inter.response.send_message(embed = embed , view = vote1(title = 제목))
 
 gameList = ["유튜브" , "스케치" , "베트레일" , "피싱턴" , "워드스넥" , "포커(부스트)" , "체스(부스트)" , "체커(부스트)" , "오초(부스트)" , "글자타일(부스트)" , "글자맟추기(부스트)" , "글자리그(부스트)" , "아쿠워드(부스트)"]
 
@@ -436,32 +432,6 @@ async def on_message(message):
         else:
             embed = Embed(title ="{}님은 5공지를 사용할권한이 없습니다".format(message.author.mention),color = 0x000fff)
             await message.channel.send(embed=embed)
-    if message.content.startswith(f"{p}수학"):
-        embed = Embed(title = "수학",
-        description ="""
-sin 각도
-cos 각도
-tan 각도
-""",
-        color = 0x00ff00)
-        await message.channel.send(embed = embed)
-    if message.content.startswith("sin"):
-        s = message.content[4:]
-        s = int(s)
-        embed = Embed(title = "sin {} = {}".format(s , sin(s)) , color = 0xff0000)
-        await message.channel.send(embed = embed)
-
-    if message.content.startswith("cos"):
-        co = message.content[4:]
-        co = int(co)
-        embed = Embed(title = "cos {} = {}".format(co , cos(co)) , color = 0xff0000)
-        await message.channel.send(embed = embed)
-
-    if message.content.startswith("tan"):
-        t = message.content[4:]
-        t = int(t)
-        embed = Embed(title = "tan {} = {}".format(t , tan(t)) , color = 0xff0000)
-        await message.channel.send(embed = embed)
 
     if message.content.startswith(f"{p}정보"):
         try: 
@@ -546,141 +516,6 @@ tan 각도
             embed2= Embed(title="명령어를 사용할 수 있는 권한이 없어요!", color=0xFF0000)
             await message.channel.send(embed=embed2)
 
-    if message.content.startswith(f"{p}현재"):
-        y = str(datetime.datetime.now())[:4]
-        m = int(str(datetime.datetime.now())[11:13])
-        y_1 = int(y[3:])
-        y_2 = int(y)%12
-
-        if y_1 == 4:
-            t_1 = "갑"
-        if y_1 == 5:
-            t_1 = "을"
-        if y_1 == 6:
-            t_1 = "병"
-        if y_1 == 7:
-            t_1 = "정"
-        if y_1 == 8:
-            t_1 = "무"
-        if y_1 == 9:
-            t_1 = "기"
-        if y_1 == 0:
-            t_1 = "경"
-        if y_1 == 1:
-            t_1 = "신"
-        if y_1 == 2:
-            t_1 = "임"
-        if y_1 == 3:
-            t_1 = "계"
-
-        if y_2 == 4:
-            t_2 = "자"
-        if y_2 == 5:
-            t_2 = "축"
-        if y_2 == 6:
-            t_2 = "인"
-        if y_2 == 7:
-            t_2 = "묘"
-        if y_2 == 8:
-            t_2 = "진"
-        if y_2 == 9:
-            t_2 = "사"
-        if y_2 == 10:
-            t_2 = "오"
-        if y_2 == 11:
-            t_2 = "미"
-        if y_2 == 0:
-            t_2 = "신"
-        if y_2 == 1:
-            t_2 = "유"
-        if y_2 == 2:
-            t_2 = "술"
-        if y_2 == 3:
-            t_2 = "해"
-        t_all = str(t_1+t_2+"년")
-
-        if "갑" in t_all[:1]:
-            t_all+="(甲"
-        if "을" in t_all[:1]:
-            t_all+="(乙"
-        if "병" in t_all[:1]:
-            t_all+="(丙"
-        if "정" in t_all[:1]:
-            t_all+="(丁"
-        if "무" in t_all[:1]:
-            t_all+="(戊"
-        if "기" in t_all[:1]:
-            t_all+="(己"
-        if "경" in t_all[:1]:
-            t_all+="(庚"
-        if "신" in t_all[:1]:
-            t_all+="(辛"
-        if "임" in t_all[:1]:
-            t_all+="(壬"
-        if "계" in t_all[:1]:
-            t_all+="(癸"
-
-        if "자" in t_all[1:]:
-            t_all+="子年)\n**--------띠--------**\n쥐띠"
-        if "축" in t_all[1:]:
-            t_all+="丑年)\n**--------띠--------**\n소띠"
-        if "인" in t_all[1:]:
-            t_all+="寅年)\n**--------띠--------**\n범띠(호랑이띠)"
-        if "묘" in t_all[1:]:
-            t_all+="卯年)\n**--------띠--------**\n토끼띠"
-        if "진" in t_all[1:]:
-            t_all+="辰年)\n**--------띠--------**\n용띠"
-        if "사" in t_all[1:]:
-            t_all+="巳年)\n**--------띠--------**\n뱀띠"
-        if "오" in t_all[1:]:
-            t_all+="午年)\n**--------띠--------**\n말띠"
-        if "미" in t_all[1:]:
-            t_all+="未年)\n**--------띠--------**\n양띠"
-        if "신" in t_all[1:]:
-            t_all+="申年)\n**--------띠--------**\n원숭이띠"
-        if "유" in t_all[1:]:
-            t_all+="酉年)\n**--------띠--------**\n닭띠"
-        if "술" in t_all[1:]:
-            t_all+="戌年)\n**--------띠--------**\n개띠(강아지띠)"
-        if "해" in t_all[1:]:
-            t_all+="亥年)\n**--------띠--------**\n돼지띠"
-
-        if m >= 23 and m < 1:
-            t_all+="\n**-------시간-------**\n자시(子時) : 쥐가 제일 열심히 뛰어 다니는 때"
-        if m >= 1 and m < 3:
-            t_all+="\n**-------시간-------**\n축시(丑時) : 밤새 풀을 먹은 소가 한참 반추하며 아침 밭갈이 준비를 할 때"
-        if m >= 3 and m < 5:
-            t_all+="\n**-------시간-------**\n인시(寅時) : 하루 중 호랑이가 제일 흉악한 때"
-        if m >= 5 and m < 7:
-            t_all+="\n**-------시간-------**\n묘시(卯時) : 해뜨기 직전에 달이 아직 중천에 걸려 있어 그 속에 옥토끼가 보이는때"
-        if m >= 7 and m < 9:
-            t_all+="\n**-------시간-------**\n진시(辰時) : 용들이 날면서 강우 준비를 하는 때"
-        if m >= 9 and m < 11:
-            t_all+="\n**-------시간-------**\n사시(巳時) : 이 시간에 뱀은 자고 있어 사람을 해치는 일이 없는 때"
-        if m >= 11 and m < 13:
-            t_all+="\n**-------시간-------**\n오시(午時) : 이 시간에는 고조에 달했던 ‘양기’가 점점 기세를 죽이며 ‘음기’ 가 머리를 들기 시작하는데, 말은 땅에서 달리고 땅은 ‘음기’이므로 말을 ‘음기’의 동물로 보고 이 시각을 말과 연계시킨다."
-        if m >= 13 and m < 15:
-            t_all+="\n**-------시간-------**\n미시(未時) : 양이 이때 풀을 뜯어먹어야 풀이 재생하는데 해가 없다"
-        if m >= 15 and m < 17:
-            t_all+="\n**-------시간-------**\n신시(申時) : 이 시간에 원숭이가 울음소리를 제일 많이 낸다."
-        if m >= 17 and m < 19:
-            t_all+="\n**-------시간-------**\n유시(酉時) : 하루 종일 모이를 쫓던 닭들이 둥지에 들어가는 때"
-        if m >= 19 and m < 21:
-            t_all+="\n-------시간-------\n술시(戌時) : 날이 어두워지니 개들이 집을 지키기 시작하는 때"
-        if m >= 21 and m < 0 or m >= 21 and m < 24:
-            t_all+="\n**-------시간-------**\n해시(亥時) : 이 시간에 돼지가 가장 단잠을 자고 있는 시간이다."
-        t_all = "**-------년도-------**\n"+t_all
-        await message.channel.send(embed = Embed(title = "지금은?",description= t_all,color = random_color()))
-    
-    if message.content.startswith(f"{p}타이머"):
-        timer = await message.channel.send(embed = Embed(title=">>> {}님의 타이머__{}초__".format(message.author,message.content.split(" ")[1]),description=">>> {}".format(message.content.split(" ")[1]),color = random_color()))
-        for i in range(int(timer.embeds[0].description[4:])):
-            await asyncio.sleep(1)
-            timer_time = int(timer.embeds[0].description[4:])
-            timer_time -= 1
-            timer = await timer.edit(embed = Embed(title=timer.embeds[0].title,description=">>> {}".format(timer_time),color = random_color()))
-        timer = await timer.edit(embed = Embed(title=timer.embeds[0].title,description=">>> TIMEOVER!",color = 0xff0000))
-    
     if message.content.startswith(f"{p}코로나"):
         e = await message.channel.send(embed = Embed(title="사이트를 불러오는중...",color = random_color()))
         req = requests.get("https://api.corona-19.kr/korea/?serviceKey=5vH8sL1K6PGxkbIMla4r3jnAEgRuZYFqi").json()
@@ -996,142 +831,9 @@ tan 각도
 #게임-----------------------------------------------------------------------------------------------------------
 #-----------------------------!명령어----------------------------#
     if message.content.startswith(f"{p}명령어"):
-        embed = Embed(title = "명령어",color = 0x00ff00)
-        embed.add_field(name="기본 명령어 - 1",value=f"""
->>> {p}수학
-{p}업타임
-{p}투표 /이름/항목1/항목2/항목3....
-{p}정보
-{p}타이머 초
-{p}현재
-{p}유튜브 채널이름
-{p}서버정보
-{p}활성화여부
-{p}이모지 커스텀이모지
-{p}봇 @봇 멘션
-""" , inline = False)
-        embed.add_field(name="권한필요 명령어",value=f"""
->>> {p}공지 /이름/글 ```어드민 필요```
-{p}슬로우 초 ```어드민필요```
-{p}링크 비활성화 #링크삭제 비활성화 ```어드민 필요```
-{p}링크 활성화 #링크삭제 활성화 ```어드민 필요```
-{p}킥 @멘션 사유 ```유저킥 필요```
-{p}벤 @멘션 사유 ```유저벤 필요```
-{p}추가 @멘션 @역할 ```어드민```
-{p}제거 @멘션 @역할 ```어드민```
-""" , inline = False)
-        embed.add_field(name="삭제 명령어",value=f"""
->>> {p}청소 숫자 ```메세지관리 필요```
-{p}clear 숫자 ```메세지관리 필요```
-""" , inline = False)
-        embed.add_field(name="UI 명령어",value=f"""
->>> {p}버튼
-{p}계산기
-{p}봇정보
-""" , inline = False)
-        embed.add_field(name="AI",value=f"""
->>> //단어 ```핑퐁 빌더 지원```
-""" , inline = False)
-        embed.set_footer(text="개발자:SCRATCHER 5-23♪#9999", icon_url="https://cdn.discordapp.com/icons/850364325834391582/86fe24d9e32bed450f822f0bc72a729b.png?size=96")
-        await message.channel.send(embed = embed , view = Update())
-    
-
-#--------------------------------------음악--------------------------------------#
-
-    # if message.content.startswith(f"{p}상태"):
-    #     await message.channel.send("""🟢│음악명령어 사용가능""")
-
-    # if message.content.startswith(f"{p}들어와"):
-    #     await message.author.voice.channel.connect()
-    #     await message.delete()
-
-    # if message.content.startswith(f"{p}나가"):
-    #     for vc in client.voice_clients:
-    #         if vc.guild == message.guild:
-    #             voice = vc
-    #     await voice.disconnect()
-    #     await message.delete()
-
-    # if message.content.startswith(f"{p}재생"):
-    #     noo = 0
-    #     embed = Embed(title = f"{message.author.name}님이요청하신 곡을 준비중 입니다", color = 0x00ff00)
-    #     emb = await message.channel.send(embed = embed)
-    #     for vc in client.voice_clients:
-    #         if vc.guild == message.guild:
-    #             voice = vc
-    #     channel = message.author.voice.channel
-    #     txt = message.content[4:]
-    #     print(txt)
-    #     res = requests.get(f"https://youtube.googleapis.com/youtube/v3/search?q={txt}&part=snippet&type=veodio&key={yt_api_key_m}&alt=json",headers={'User-Agent': 'Mozilla/5.0'}).json()
-    #     for item in sorted(res['items'] , key=lambda x:x['snippet']['publishedAt']):
-    #         title = item['snippet']['title']
-    #         img = item['snippet']['thumbnails']['high']['url']
-    #         try:
-    #             url = f"https://www.youtube.com/watch?v={item['id']['videoId']}"
-    #         except:
-    #             await emb.edit(embed = Embed(title = "오류!",description = "곡을 찾을수 없어요",color = 0xff0000))
-    #             noo = 1
-    #             break
-    #         break
-    #     if noo == 0:
-    #         ydl_opts = {'format': 'bestaudio'}
-    #         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-    #         with YoutubeDL(ydl_opts) as ydl:
-    #             info = ydl.extract_info(url, download=False)
-    #             URL = info['formats'][0]['url']
-    #             name = info['title']
-    #         voice = client.voice_clients[0]
-    #         if not vc.is_playing():
-    #             embed = Embed(title = f"{message.author.name}님이 {name}을 재생합니다" , color = 0x00ff00 , description = f"[유튜브영상링크]({url})")
-    #             embed.set_thumbnail(url = img)
-    #             a = await emb.edit(embed = embed)
-    #             await a.add_reaction("<:vv:905014667632594994>")
-    #         else:
-    #             await a.delete()
-    #             await message.channel.send(embed = Embed(title = "이미 다른곡이 재생중 입니다" , description = "곡을 멈추고 싶다면 ``5정지``를 사용하세요"))
-    #         if not vc.is_playing():
-    #             # musicPlay(URL , voice , FFMPEG_OPTIONS)
-    #             voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
-
-    
-    # if message.content.startswith(f"{p}정지"):
-    #     for vc in client.voice_clients:
-    #       if vc.guild == message.guild:
-    #           voice = vc
-    #     voice.stop()
-    #     await message.delete()
-    # try:
-    #     f.close()
-    # except:
-    #     pass
-
-#--------------------------------------음악--------------------------------------#
-
-    # await client.process_commands(message)
-    
-#----------------리액션-----------------#
-@client.event
-async def on_reaction_remove(reaction, user):
-    message = reaction.message
-    if str(reaction.emoji) == "👁":
-        if user.guild_permissions.manage_messages:
-            if message.author.id == five:
-                if str(message.embeds[0].title) == "추가 완료!" or str(message.embeds[0].title) == "제거 완료!":
-                    embed = Embed(title = message.embeds[0].title , color = message.embeds[0].color , description=f"메세지 관리자는 👁을 눌러서 금지단어를 보실수 있어요")
-                    await message.edit(embed = embed)
-@client.event
-async def on_reaction_add(reaction, user):
-    global five
-    message = reaction.message
-
-    if user.bot == False:
-
-
-        if str(reaction.emoji) == "<:xx:905014703577772063>":
-            if user.guild_permissions.manage_messages:
-                if ("https://" in message.content or "http://" in message.content) and (("tenor.co" in message.content) == False and ("media.discordapp.net" in message.content) == False and ("https://cdn.discordapp.com/emojis/" in message.content) == False):
-                    await reaction.message.author.send(embed = Embed(title = "메세지 삭제",description = f"{user}님의의해 당신의 [링크]({reaction.message.content}) 가 삭제되었습니다"))
-                    await reaction.message.delete()
+        embed = Embed(title = "명령어" , description = "아래를 눌러서 선택하세요",color = 0x00ff00)
+        embed.set_footer(text=f"개발자:{utils.get(client.get_all_members(),id = scratcher)}", icon_url=f"{utils.get(client.get_all_members(),id = five).avatar}")
+        await message.channel.send(embed = embed , view = Update(message.author))
 #버튼------------------------------------------------------
 class org_but(ui.View):
     @ui.button(label="버튼",style=ButtonStyle.green)
@@ -1515,9 +1217,103 @@ class inviteGAME(ui.View):
         self.add_item(ui.Button(label = str(self.title) , style = ButtonStyle.link , url = str(self.url) , emoji = "<:game:936067292809269348>"))
 
 class Update(ui.View):
-    def __init__(self):
+    def __init__(self , user):
         super().__init__()
         self.add_item(ui.Button(label = "업데이트소식" , style = ButtonStyle.link , url = "https://github.com/5-23/5-23bot/blob/main/info/update.md" , emoji = "<:game:936067292809269348>"))
+        self.user = user
+
+    @ui.select(options=[SelectOption(label="기본 명령어" , emoji = "<:message:911643433578414100>") , SelectOption(label="권한 명령어" , emoji = "<:setting:911307927367864350>") , SelectOption(label="UI 명령어" , emoji = "<:info:936063121141944421>") , SelectOption(label="AI 명령어" , emoji = "<:talk:903834884424998974>") , SelectOption(label="슬레쉬 명령어" , emoji = "<:slash:911307927401410611>")] )
+    async def sub(self , select : ui.Select , inter : Integration):
+        if inter.user == self.user:
+            embed = Embed(title = "명령어" , color = 0x00ff00)
+            embed.set_footer(text=f"개발자:{utils.get(client.get_all_members(),id = scratcher)}", icon_url=f"{utils.get(client.get_all_members(),id = five).avatar}")
+            if select.values[0] == "기본 명령어":
+                embed.add_field(name="기본 명령어",value=f"""
+>>> ```md
+# {p}업타임
+> 봇의 작동시간을 보여줍니다
+# {p}투표 /<이름>/<항목1>/<항목2>/<항목3>....
+> 투표를 합니다
+# {p}정보 <@멘션>
+> 유버정보를 보여줍니다
+# {p}유튜브 <채널이름>
+> 유튜브 채널을 찾습니다
+# {p}서버정보
+> 서버의 정보를 보여줍니다
+# {p}이모지 커스텀이모지
+> 이모지를 확대합니다
+# {p}봇 <@봇 멘션>
+> 봇의정보를 가저옵니다
+```
+""" , inline = False)
+        if select.values[0] == "권한 명령어":
+            embed.add_field(name="권한 명령어",value=f"""
+>>> ```md
+# 어드민
+- {p}공지 /<제목>/<글>
+> 공지를 합니다
+- {p}슬로우 <초>
+> 채널의 슬로우를 관리합니다
+- {p}추가 <@멘션> <@역할>
+> 역할을 추가합니다
+- {p}제거 <@멘션> <@역할>
+> 역할을 제거합니다
+
+# 유저 킥/벤
+- {p}킥 <@멘션> <사유>
+> 역할을 킥합니다
+- {p}벤 <@멘션> <사유>
+> 역할을 벤합니다
+
+# 메세지관리
+- {p}청소 <숫자>
+> 메세지를 삭제하고 메세지를 보냅니다
+- {p}clear <숫자>
+> 메세지를 삭제합니다
+```
+""" , inline = False)
+        if select.values[0] == "UI 명령어":
+            embed.add_field(name="UI 명령어",value=f"""
+>>> ```md
+# {p}버튼
+> 버튼을보냅니다
+
+# {p}계산기
+> 계산기를 만듭니다
+
+# {p}봇정보
+> 봇의정보를 보여줍니다
+```
+""" , inline = False)
+        if select.values[0] == "AI 명령어":
+            embed.add_field(name="AI 명령어",value=f"""
+>>> ```md
+# //<단어>
+> 봇과 대화를합니다
+```
+""" , inline = False)
+        if select.values[0] == "슬레쉬 명령어":
+            embed.add_field(name="슬레쉬 명령어",value=f"""
+>>> ```md
+# /명령어
+> 명령어를 보여줍니다
+# /핑
+> 봇의 핑을 보여줍니다"
+# /임베드만들기 <제목> <생성일> <설명> <작은설명> <색상>
+> 임베드를 만듭니다
+# /로블록스
+> 로블록스 유저의 정보를 가저옵니다
+# /타임아웃 <시간>
+> 멤버를 타임아웃(뮤트) 시킴니다.
+# /이모지
+> 랜덤으로 이모지를 보냅니다
+# /투표 <제목> <색상>
+> 찬반 투표를 합니다
+# /게임 <종목>
+> 게임을 합니다(베타)
+```
+""" , inline = False)
+        await inter.message.edit(embed = embed)
 
 #버튼------------------------------------------------------
 
