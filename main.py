@@ -32,8 +32,6 @@ import humanfriendly
 yt_api_key = "AIzaSyA21HLcAEjVooEfUQNLaAOf5jXdR_1r7UY"
 yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
 
-#==================================================================
-
 ran = 0
 back = 0
 scratcher = 577266050769485844
@@ -52,9 +50,6 @@ client = commands.Bot(command_prefix = p,intents=INTENTS)
 
 def random_color():
     return randint(0x000000,0xffffff)
-
-def musicPlay(url , voice , option):
-    voice.play(FFmpegPCMAudio(url, option) , lambda e : musicPlay(url , voice , option))
 
 @tasks.loop()
 async def change_bot():
@@ -100,9 +95,6 @@ async def on_ready():
     print('------')
     change_bot.start()
     uptime.start()
-
-    for i in client.guilds:
-        print(f"{i.name} : {len(i.members)}")
 
     # ch = client.get_channel(949223351426105354)
     # embed = Embed(title = "규칙" , description = ">>> 1. 홍보를 금지\n\n2. 위급하지 않을경우 `@멘션` 금지\n\n3. 질문은 `개발 카테고리`에서 하세요" , color = 0xb000ff)
@@ -277,7 +269,7 @@ async def 투표(inter : Interaction , 제목 : str = SlashOption(description = 
         색상 = 색상.replace("#" , "")
         color = eval(f"0x{색상}")
     embed = Embed(title = 제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
-    await inter.response.send_message(embed = embed , view = vote1(title = 제목))
+    await inter.response.send_message(embed = embed , view = vote1(title = 제목 , admin = inter.user))
 
 gameList = ["유튜브" , "스케치" , "베트레일" , "피싱턴" , "워드스넥" , "블레이징" , "포커(부스트)" , "체스(부스트)" , "체커(부스트)" , "오초(부스트)" , "글자타일(부스트)" , "글자맟추기(부스트)" , "글자리그(부스트)" , "아쿠워드(부스트)"]
 
@@ -916,7 +908,7 @@ async def Calculator(x):
     return eval(str(x).replace("```","").replace("\n","").replace("ㅤ","").replace("×","*").replace("÷","/").replace("²","**2").replace("𝝅","3.141592"))
 class calculator(ui.View):
     def __init__(self , user):
-        super().__init__(timeout=None)
+        super().__init__(timeout=600)
         self.user = user
 
     @ui.button(label = "1" , style = ButtonStyle.gray)
@@ -1181,9 +1173,10 @@ class drow(ui.View):
         await inter.message.edit(embed = inter.message.embeds[0])
 
 class vote1(ui.View):
-    def __init__(self , title = None):
+    def __init__(self , title = None , admin : Member = None):
         super().__init__(timeout = None)
         self.title = title
+        self.admin = admin
         self.yesALL = []
         self.noALL = []
 
@@ -1215,6 +1208,26 @@ class vote1(ui.View):
             await inter.message.edit(embed = embed)
         else:
             await inter.response.send_message(">>> 이미 <:nooo:905078780421369946>에 투표를 하였습니다" , ephemeral = True)
+    
+    @ui.button(emoji = "<:channel_lock:911651516962725979>" , style = ButtonStyle.gray)
+    async def end(self , button : ui.Button , inter : Integration):
+        if inter.user == self.admin:
+            # super().__init__(timeout = 0)
+
+
+            self.clear_items()
+            self.add_item(ui.Button(emoji = "<:good:905078721881452565>" , style = ButtonStyle.green , disabled=True))
+            self.add_item(ui.Button(emoji = "<:nooo:905078780421369946>" , style = ButtonStyle.red , disabled=True))
+            self.add_item(ui.Button(emoji = "<:channel_lock:911651516962725979>" , style = ButtonStyle.gray , disabled=True))
+
+            # self.dis = 0
+            description = f"<:good:905078721881452565> | {len(self.yesALL)}\n<:nooo:905078780421369946> | {len(self.noALL)}"
+            embed = Embed(title = self.title , description = description , color = inter.message.embeds[0].color).set_footer(text = "해탕투표는 종료되었습니다" , icon_url=self.admin.avatar)
+            await inter.message.edit(embed = embed , view = self)
+            del self
+            print(self)
+        else:
+            await inter.response.send_message(">>> 투표를 만든사람만 끝낼수 있습니다")
 
 class urlButton(ui.View):
     def __init__(self):
