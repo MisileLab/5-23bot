@@ -279,7 +279,7 @@ async def 투표(inter : Interaction , 제목 : str = SlashOption(description = 
     embed = Embed(title = 제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
     await inter.response.send_message(embed = embed , view = vote1(title = 제목))
 
-gameList = ["유튜브" , "스케치" , "베트레일" , "피싱턴" , "워드스넥" , "포커(부스트)" , "체스(부스트)" , "체커(부스트)" , "오초(부스트)" , "글자타일(부스트)" , "글자맟추기(부스트)" , "글자리그(부스트)" , "아쿠워드(부스트)"]
+gameList = ["유튜브" , "스케치" , "베트레일" , "피싱턴" , "워드스넥" , "블레이징" , "포커(부스트)" , "체스(부스트)" , "체커(부스트)" , "오초(부스트)" , "글자타일(부스트)" , "글자맟추기(부스트)" , "글자리그(부스트)" , "아쿠워드(부스트)"]
 
 @client.slash_command(description = "게임을 합니다(베타)")
 async def 게임(inter : Interaction , 종목 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = gameList ) ):
@@ -294,6 +294,8 @@ async def 게임(inter : Interaction , 종목 : str = SlashOption(description = 
     elif 종목 == "베트레일": game = game.betrayal
     elif 종목 == "피싱턴": game = game.fishington
     elif 종목 == "워드스넥": game = game.word_snacks
+    elif 종목 == "워드스넥": game = game.blazing
+
     elif 종목 == "포커(부스트)": game = game.poker
     elif 종목 == "체스(부스트)": game = game.chess
     elif 종목 == "체커(부스트)": game = game.checker
@@ -690,8 +692,8 @@ async def on_message(message):
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
-            msg1 = await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}.",color = 0xff0000))
-            msg2 = await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
+            msg2 = await user.send(embed = Embed(title=f"{message.author}님이 당신을 킥했습니다",description=f"사유:{msg}.",color = 0xff0000))
+            msg1 = await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 킥했습니다",description=f"사유:{msg}",color = 0xff0000))
             try:
                 await user.kick()
             except:
@@ -704,8 +706,8 @@ async def on_message(message):
             user = message.mentions[0]
             msg = (message.content[25:])
             await message.delete()
-            msg1 = await user.send(embed = Embed(title=f"{message.author}님이 당신을 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
-            msg2 = await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}.",color = 0xff0000))
+            msg2 = await user.send(embed = Embed(title=f"{message.author}님이 당신을 밴했습니다",description=f"사유:{msg}",color = 0xff0000))
+            msg1 = await message.channel.send(embed = Embed(title=f"{message.author}님이 {user}을/를 밴했습니다",description=f"사유:{msg}.",color = 0xff0000))
             try:
                 await user.ban()
             except:
@@ -1243,16 +1245,22 @@ class Update(ui.View):
 >>> ```md
 # {p}업타임
 > 봇의 작동시간을 보여줍니다
+
 # {p}투표 /<이름>/<항목1>/<항목2>/<항목3>....
 > 투표를 합니다
+
 # {p}정보 <@멘션>
 > 유버정보를 보여줍니다
+
 # {p}유튜브 <채널이름>
 > 유튜브 채널을 찾습니다
+
 # {p}서버정보
 > 서버의 정보를 보여줍니다
-# {p}이모지 커스텀이모지
+
+# {p}이모지 <커스텀이모지>
 > 이모지를 확대합니다
+
 # {p}봇 <@봇 멘션>
 > 봇의정보를 가저옵니다
 ```
@@ -1261,24 +1269,32 @@ class Update(ui.View):
             embed.add_field(name="권한 명령어",value=f"""
 >>> ```md
 # 어드민
+
 - {p}공지 /<제목>/<글>
 > 공지를 합니다
+
 - {p}슬로우 <초>
 > 채널의 슬로우를 관리합니다
+
 - {p}추가 <@멘션> <@역할>
 > 역할을 추가합니다
+
 - {p}제거 <@멘션> <@역할>
 > 역할을 제거합니다
 
 # 유저 킥/벤
+
 - {p}킥 <@멘션> <사유>
 > 역할을 킥합니다
+
 - {p}벤 <@멘션> <사유>
 > 역할을 벤합니다
 
 # 메세지관리
+
 - {p}청소 <숫자>
 > 메세지를 삭제하고 메세지를 보냅니다
+
 - {p}clear <숫자>
 > 메세지를 삭제합니다
 ```
@@ -1308,18 +1324,25 @@ class Update(ui.View):
 >>> ```md
 # /명령어
 > 명령어를 보여줍니다
+
 # /핑
-> 봇의 핑을 보여줍니다"
+> 봇의 핑을 보여줍니다
+
 # /임베드만들기 <제목> <생성일> <설명> <작은설명> <색상>
 > 임베드를 만듭니다
+
 # /로블록스 <유저이름>
 > 로블록스 유저의 정보를 가저옵니다
+
 # /타임아웃 <시간>
 > 멤버를 타임아웃(뮤트) 시킴니다.
+
 # /이모지
 > 랜덤으로 이모지를 보냅니다
+
 # /투표 <제목> <색상>
 > 찬반 투표를 합니다
+
 # /게임 <종목>
 > 게임을 합니다(베타)
 ```
