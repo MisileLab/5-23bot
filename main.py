@@ -29,8 +29,8 @@ import requests
 from PingPongTool import PingPong
 import humanfriendly
 
-yt_api_key = "AIzaSyA21HLcAEjVooEfUQNLaAOf5jXdR_1r7UY"
-yt_api_key_m = "AIzaSyCm9gKtQc9IJlvx5pCNc_X5SwPtADiMCMM"
+yt_api_key = "YOUTUBE_APIKEY"
+yt_api_key_m = "YOUTUBE_APIKEY
 
 ran = 0
 back = 0
@@ -103,24 +103,32 @@ async def on_ready():
 
 @client.slash_command(description = "명령어를 보여줍니다")
 async def 명령어(inter : Interaction):
+    await inter.response.send_message("...")
+
     embed = Embed(title = "명령어" , description = "아래를 눌러서 선택하세요",color = 0x00ff00)
     embed.set_footer(text=f"개발자:{utils.get(client.get_all_members(),id = scratcher)}", icon_url=f"{utils.get(client.get_all_members(),id = five).avatar}")
-    await inter.response.send_message(embed = embed , view = Update(inter.user))
+    await inter.edit_original_message(content = "",embed = embed , view = Update(inter.user))
 
 @client.slash_command(description = "봇의 핑을 보여줍니다")
 async def 핑(inter : Interaction):
+    await inter.response.send_message("...")
+
     ping = int(round(client.latency * 1000))
     embed = Embed(title = "퐁!", description = ("핑 : {}ms").format(ping),color = random_color())
-    if ping <= 200 and ping > 100:
+    if ping <= 300 and ping > 200:
         embed.add_field(name = "보통 :yellow_square:", value = "by - {}".format(inter.user.name))
     elif ping <= 100:
+        embed.add_field(name = "빠름 :white_large_square: " ,value = "by - {}".format(inter.user.name))
+    elif ping <= 200:
         embed.add_field(name = "정상 :green_square:" ,value = "by - {}".format(inter.user.name))
-    elif ping > 200:
+    elif ping > 300:
         embed.add_field(name = "비정상 :red_square:" ,value = "by - {}".format(inter.user.name))
-    await inter.response.send_message(embed = embed)
+    await inter.edit_original_message(content = "" , embed = embed)
 
 @client.slash_command(description = "임베드를 만듭니다")
 async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(description="제목을 만듭니다") , 생성일  : str = SlashOption(description="생성일을 표시합니다 참일경우",choices = ["참","거짓"]) , 설명 : str = SlashOption(required = False , description = "설명") , 작은설명 : str = SlashOption(required = False , description = "작은설명") , 색상 : str = SlashOption(required = False , description = "색상")):
+    await inter.response.send_message("...")
+
     try:
         if "0x" in 색상:color = eval(색상)
         else:color = eval(f"0x{색상}")
@@ -138,11 +146,12 @@ async def 임베드만들기(inter: Interaction , 제목 : str = SlashOption(des
 
     embed = Embed(title = 제목.replace("\\n","\n") , description = description ,color = color , timestamp=timestamp)
     if footer != None:embed.set_footer(text = footer)
-
-    await inter.response.send_message(embed = embed)
+    await inter.edit_original_message(content = "" , embed = embed)
 
 @client.slash_command(description = "로블록스 유저의 정보를 가저옵니다")
 async def 로블록스(inter : Interaction , 로블록스이름 : str = SlashOption(description = "로블록스이름")):
+    await inter.response.send_message("...")
+
     name = 로블록스이름
 
     id = requests.get(f"https://api.roblox.com/users/get-by-username?username={name}").json()["Id"]
@@ -183,7 +192,7 @@ async def 로블록스(inter : Interaction , 로블록스이름 : str = SlashOpt
             except:
                 break
         embed.add_field(name = "즐겨찾기를한 게임" , value = msg_name+"᲻" , inline = False)
-        await inter.response.send_message(embed = embed)
+        await inter.edit_original_message(content = "" , embed = embed)
     except:
         embed = Embed(title = f"{name}의 정보" , color = random_color())
         embed.add_field(name = "설명" , value=description+"᲻" , inline = False)
@@ -214,13 +223,14 @@ async def 로블록스(inter : Interaction , 로블록스이름 : str = SlashOpt
             except:
                 break
         embed.add_field(name = "즐겨찾기를한 게임" , value = msg_name+"..." , inline = False)
-        await inter.response.send_message(embed = embed)
+        await inter.edit_original_message(constent = "" , embed = embed)
 
 
 @client.slash_command(description = "멤버를 타임아웃(뮤트) 시킴니다.")
 async def 타임아웃(inter : Interaction , 멤버 : Member = SlashOption(description = "멤버") , 시간 : str = SlashOption(description = "시간") , 사유 : str = SlashOption(description = "사유")):
     try:
         if inter.user.guild_permissions.administrator or inter.user.id == scratcher:
+            await inter.response.send_message(멤버.mention)
             try:
                 int(시간)
                 시간 = str(시간)+"초"
@@ -236,14 +246,15 @@ async def 타임아웃(inter : Interaction , 멤버 : Member = SlashOption(descr
                 시간 = "28일"
             
             await 멤버.edit(timeout=utils.utcnow() + datetime.timedelta(seconds=time))
-            await inter.response.send_message(멤버.mention , embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}``동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
+            await inter.edit_original_message(embed = Embed(title = "타임아웃!",description = f"{멤버.mention} 님은 ``{시간}``동안 서버이용이 불가능합니다 \n\n사유:\n```\n{사유}\n```" , color= random_color()))
         else:
             await inter.response.send_message(embed = Embed(title="당신은 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
     except:
-        await inter.response.send_message(embed = Embed(title="봇에게 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
+        await inter.edit_original_message(embed = Embed(title="봇에게 권한이 없어요" , description=">>> 필요한 권한 : 어드민") , ephemeral=True)
 
 @client.slash_command(description = "랜덤으로 이모지를 보냅니다")
 async def 이모지(inter : Interaction):
+    await inter.response.send_message("...")
     def emojiLoop():
         global emojis
         try:
@@ -258,10 +269,11 @@ async def 이모지(inter : Interaction):
     else:
         emoji = (str(emojis).split(":")[2]).replace(">","")
         emoji_link = f"https://cdn.discordapp.com/emojis/{emoji}.png?size=160"
-    await inter.response.send_message(embed = Embed(title = f"이모지! {emojis}" , color = random_color()).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
+    await inter.edit_original_message(content = "" , embed = Embed(title = f"이모지! {emojis}" , color = random_color()).set_image(url =  emoji_link) , view = DownEmoji(user = inter.user , url = emoji_link , name = str(emojis).replace("<","").replace(">","").split(":")[1]))
 
 @client.slash_command(description = "찬반 투표를 합니다")
 async def 투표(inter : Interaction , 제목 : str = SlashOption(description = "투표의 제목을 써주세요") , 색상 : str = SlashOption(required = False , description = "색상")):
+    await inter.response.send_message("...")
     if (색상 == None):
         color = random_color()
     else:
@@ -269,12 +281,13 @@ async def 투표(inter : Interaction , 제목 : str = SlashOption(description = 
         색상 = 색상.replace("#" , "")
         color = eval(f"0x{색상}")
     embed = Embed(title = 제목 , description = f"<:good:905078721881452565> | 0\n<:nooo:905078780421369946> | 0" , color = color)
-    await inter.response.send_message(embed = embed , view = vote1(title = 제목 , admin = inter.user))
+    await inter.edit_original_message(content = "" , embed = embed , view = vote1(title = 제목 , admin = inter.user))
 
 gameList = ["유튜브" , "스케치" , "베트레일" , "피싱턴" , "워드스넥" , "블레이징" , "포커(부스트)" , "체스(부스트)" , "체커(부스트)" , "오초(부스트)" , "글자타일(부스트)" , "글자맟추기(부스트)" , "글자리그(부스트)" , "아쿠워드(부스트)"]
 
 @client.slash_command(description = "게임을 합니다(베타)")
 async def 게임(inter : Interaction , 종목 : str = SlashOption(description = "원하는걸 선텍하세요!" , choices = gameList ) ):
+    await inter.response.send_message("...")
     try:
         channel = inter.user.voice.channel
     except:
@@ -298,7 +311,23 @@ async def 게임(inter : Interaction , 종목 : str = SlashOption(description = 
     elif 종목 == "아쿠워드(부스트)": game = game.awkword
 
     invite_link = await channel.create_activity_invite(game)
-    await inter.response.send_message(embed = Embed(title = f"{종목}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
+    await inter.edit_original_message(content = "" , embed = Embed(title = f"{종목}" , description = f"{inter.user}님이 만듬" , color = random_color()) , view = inviteGAME(title = "참가하기" , url = str(invite_link) ))
+
+@client.slash_command(description = "현제 공지를 보여줍니다")
+async def 공지사항(inter : Interaction):
+    await inter.response.send_message("...")
+    a = requests.get("https://github.com/5-23/5-23bot/blob/main/src/bot")
+
+    soup = BeautifulSoup(a.text , "html.parser")
+    msg = str(soup.find("td" , id = "LC1")).replace('<td class="blob-code blob-code-inner js-file-line" id="LC1">' , "")
+    msg = msg.replace('</td>' , "")
+    msg = msg.replace("\\n" , "\n")
+
+    embed = Embed(title = "공지사항" , description = msg , color = random_color())
+    embed.set_thumbnail(url = "https://github.com/5-23/5-23bot/blob/main/src/small.png?raw=true")
+    embed.set_image(url = "https://github.com/5-23/5-23bot/blob/main/src/big.png?raw=true")
+
+    await inter.edit_original_message(content = "", embed = embed)
 
 @client.event
 async def on_message(message):
@@ -457,12 +486,15 @@ async def on_message(message):
     if message.content.startswith(f"{p}핑"):
         ping = int(round(client.latency * 1000))
         embed = Embed(title = "핑", description = ("핑 : {}ms").format(ping),color = random_color())
-        if ping <= 200 and ping > 100:
+        if ping <= 300 and ping > 200:
             embed.add_field(name = "보통 :yellow_square:", value = "by - {}".format(message.author.name))
         elif ping <= 100:
+            embed.add_field(name = "빠름 :white_large_square: " ,value = "by - {}".format(message.author.name))
+        elif ping <= 200:
             embed.add_field(name = "정상 :green_square:" ,value = "by - {}".format(message.author.name))
-        elif ping > 200:
+        elif ping > 300:
             embed.add_field(name = "비정상 :red_square:" ,value = "by - {}".format(message.author.name))
+
         await message.channel.send(embed = embed)
 #윷놀이--------------------------------------------------
     if message.content.startswith("!봇"):
@@ -820,18 +852,6 @@ async def on_message(message):
         
     if message.content.startswith(f"{p}계산기"):
         await message.reply(embed = Embed(description = "```\nㅤ\n```" , color = random_color()) , view = calculator(message.author))
-    
-    if message.content.startswith(f"{p}그림"):
-        try:size = int(message.content.replace(f"{p}그림",""))
-        except:size = 10
-        MainMap = []
-        for i in range(size):
-            map = []
-            for j in range(size):
-                map.append(randint(0 , 0))
-            MainMap.append(map)
-        MainMap[randint(0,size-1)][randint(0,size-1)] = 2
-        await message.reply(embed = Embed(description = f"```\n{await DrowMapLoad(MainMap)}\n```" , color = random_color()) , view = drow(message.author , MainMap))
 
 #게임-----------------------------------------------------------------------------------------------------------
 #-----------------------------!명령어----------------------------#
@@ -1104,74 +1124,6 @@ async def DrowMapLoad(x):
     return MainString
 
 
-class drow(ui.View):
-    def __init__(self , user , map):
-        super().__init__(timeout=600)
-        self.size = 10
-        self.MainMap = map
-        self.user = user
-        self.emojiID = 1
-
-    @ui.button(label = "↑" , style = ButtonStyle.blurple)
-    async def w(self , button : ui.Button , inter : Integration):
-        if inter.user == self.user:
-            try:
-                self.FindMap = await DrowFind(self.MainMap)
-                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
-                self.MainMap[self.FindMap[0]-1][self.FindMap[1]] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-            except:
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-    
-    @ui.button(label = "↓" , style = ButtonStyle.blurple)
-    async def s(self , button : ui.Button , inter : Integration):
-        if inter.user == self.user:
-            try:
-                self.FindMap = await DrowFind(self.MainMap)
-                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
-                self.MainMap[self.FindMap[0]+1][self.FindMap[1]] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-            except:
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-
-    @ui.button(label = "←" , style = ButtonStyle.blurple)
-    async def a(self , button : ui.Button , inter : Integration):
-        if inter.user == self.user:
-            try:
-                self.FindMap = await DrowFind(self.MainMap)
-                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
-                self.MainMap[self.FindMap[0]][self.FindMap[1]-1] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-            except:
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-
-    @ui.button(label = "→" , style = ButtonStyle.blurple)
-    async def d(self , button : ui.Button , inter : Integration):
-        if inter.user == self.user:
-            try:
-                self.FindMap = await DrowFind(self.MainMap)
-                self.MainMap[self.FindMap[0]][self.FindMap[1]] = self.emojiID
-                self.MainMap[self.FindMap[0]][self.FindMap[1]+1] = 2
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-            except:
-                await inter.message.edit(embed = Embed(description = f"```\n{await DrowMapLoad(self.MainMap)}\n```" , color = inter.message.embeds[0].color))
-    
-    @ui.button(label="끝내기" , style = ButtonStyle.gray)
-    async def rmx(self , button : ui.Button , inter : Integration):
-        emoji = str(self.emojiID).replace("1","⬛").replace("0","⬜")
-        await inter.message.edit(embed = Embed(description = str(inter.message.embeds[0].description).replace("🟦" , emoji) , color = inter.message.embeds[0].color) , view = None)
-        
-
-    @ui.button(label="⬛" , style = ButtonStyle.danger)
-    async def black(self , button : ui.Button , inter : Integration):
-        self.emojiID = 1
-        await inter.message.edit(embed = inter.message.embeds[0])
-
-    @ui.button(label="⬜" , style = ButtonStyle.danger)
-    async def white(self , button : ui.Button , inter : Integration):
-        self.emojiID = 0
-        await inter.message.edit(embed = inter.message.embeds[0])
-
 class vote1(ui.View):
     def __init__(self , title = None , admin : Member = None):
         super().__init__(timeout = None)
@@ -1225,9 +1177,8 @@ class vote1(ui.View):
             embed = Embed(title = self.title , description = description , color = inter.message.embeds[0].color).set_footer(text = "해탕투표는 종료되었습니다" , icon_url=self.admin.avatar)
             await inter.message.edit(embed = embed , view = self)
             del self
-            print(self)
         else:
-            await inter.response.send_message(">>> 투표를 만든사람만 끝낼수 있습니다")
+            await inter.response.send_message(">>> 투표를 만든사람만 끝낼수 있습니다" , ephemeral = True)
 
 class urlButton(ui.View):
     def __init__(self):
@@ -1363,6 +1314,7 @@ class Update(ui.View):
         await inter.message.edit(embed = embed)
 
 #버튼------------------------------------------------------
+
 
 token = os.environ['BOT_TOKEN']
 client.run(token)
