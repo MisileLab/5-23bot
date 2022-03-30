@@ -1,8 +1,8 @@
 # 5-23bot
 <div>
-<img src = "https://koreanbots.dev/api/widget/bots/servers/871348411356545057.svg?icon=true&scale=3">
-<img src = "https://koreanbots.dev/api/widget/bots/votes/871348411356545057.svg?icon=true&scale=3">
-<img src = "https://koreanbots.dev/api/widget/bots/status/871348411356545057.svg?icon=true&scale=3">
+<img src = "https://koreanbots.dev/api/widget/bots/servers/871348411356545057.svg?icon=true&scale=3&style=classic">
+<img src = "https://koreanbots.dev/api/widget/bots/votes/871348411356545057.svg?icon=true&scale=3&style=classic">
+<img src = "https://koreanbots.dev/api/widget/bots/status/871348411356545057.svg?icon=true&scale=3&style=classic">
 </div>
 
 ## developers
